@@ -21,7 +21,7 @@ public class Main extends Activity {
 	private DBHelper dh; 
 	private LocationManager mLocationManager;
 	LocationListener mLocationListener;
-	Button buttonAlto;
+	Button buttonStop;
 	Button buttonStart;
 	Button buttonDelete;
 	Button buttonManualInsert;
@@ -64,7 +64,7 @@ public class Main extends Activity {
             	tv=(TextView) findViewById(R.id.TextView1); 
             	 	
             	buttonStart.setClickable(false);
-            	buttonAlto.setClickable(true);
+            	buttonStop.setClickable(true);
             	String locationprovider = mLocationManager.getBestProvider(criteria, true);
             	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
  			    
@@ -111,18 +111,18 @@ public class Main extends Activity {
  		// Close Retrieve 1 row from database
         
         // Stop location updates
- 		buttonAlto = (Button) findViewById(R.id.buttonStop1);
- 		buttonAlto.setOnClickListener(new View.OnClickListener() {
+ 		buttonStop = (Button) findViewById(R.id.buttonStop1);
+ 		buttonStop.setOnClickListener(new View.OnClickListener() {
  			@Override
  			public void onClick(View v) {
- 				buttonAlto.setClickable(false);
+ 				buttonStop.setClickable(false);
  				buttonStart.setClickable(true);
 
  				mLocationManager.removeUpdates(mLocationListener); 
  			}
  		});
- 		// Close of buttonAlto.setOnClickListener
- 		buttonAlto.setClickable(false);
+ 		// Close of buttonStop.setOnClickListener
+ 		buttonStop.setClickable(false);
  		
         // Retrieve button activity
 		buttonRetrieve = (Button) findViewById(R.id.button2);
@@ -136,8 +136,9 @@ public class Main extends Activity {
         		sb.append("Coordinates in database:\n"); 
         		for (String name : names) { 
         			sb.append(name + ", "); 
-        			sb.append("\n");
+//        			sb.append("\n");
         		} 
+        		sb.append("\n");
         		Toast.makeText(Main.this, sb.toString(), Toast.LENGTH_LONG).show();
 				
         		Log.d("EXAMPLE", "names size - " + names.size()); 
