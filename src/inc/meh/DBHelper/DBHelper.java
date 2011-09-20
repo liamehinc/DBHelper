@@ -12,12 +12,12 @@ import java.util.List;
 
 public class DBHelper {      
 	private static final String DATABASE_NAME = "coordinates.db";    
-	private static final int DATABASE_VERSION = 1;    
+	private static final int DATABASE_VERSION = 5;    
 	private static final String TABLE_NAME = "location";      
 	private Context context;    
 	private SQLiteDatabase db;      
 	private SQLiteStatement insertStmt;    
-	private static final String INSERT = "insert into " + TABLE_NAME + "(name) values (?)";      
+	private static final String INSERT = "insert into " + TABLE_NAME + " (insertype,lat,lon,cat,isdeductible,created_date) values (?,?,?,?,?,?)";      
 	public DBHelper(Context context) {       
 		this.context = context;       
 		OpenHelper openHelper = new OpenHelper(this.context);       
@@ -25,8 +25,12 @@ public class DBHelper {
 		this.insertStmt = this.db.compileStatement(INSERT);   
 		}     
 	
-	public long insert(String name) {       
-		this.insertStmt.bindString(1, name);       
+	public long insert(String name,Double lat, Double lon, String cat, int isdeductible) {  
+		this.insertStmt.bindString(1, name);
+		this.insertStmt.bindDouble(2,lat);
+		this.insertStmt.bindDouble(3,lon);
+		this.insertStmt.bindString(4,cat);
+		this.insertStmt.bindDouble(5,isdeductible);
 		return this.insertStmt.executeInsert();    
 		}      
 	
@@ -36,7 +40,8 @@ public class DBHelper {
 	
 	public String SelectRow(String str) {
 		String strRow = "";
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"name"}, "name like " + "'" + str + "%'",null,null,null,"name desc");	
+		//Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");	
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");
 		if (cursor.moveToFirst()) {
 			strRow = cursor.getString(0);
 		}
@@ -46,12 +51,15 @@ public class DBHelper {
     }
 
 	
-	public List<String> selectAll() {      
+	public List<String> selectAll(String sortstring) {      
 		List<String> list = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "name" },null, null, null, null, "name desc");
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon", "cat", "isdeductible", "created_date"},null, null, null, null, sortstring);
 		if (cursor.moveToFirst()) {
 			do {
-				list.add(cursor.getString(0));       
+				list.add(cursor.getString(0));
+				list.add(cursor.getString(1));
+				list.add(cursor.getString(4));
+				list.add(cursor.getString(5));
 				}
 			while (cursor.moveToNext());
 			}
@@ -69,7 +77,7 @@ public class DBHelper {
 			
 			@Override      
 			public void onCreate(SQLiteDatabase db) {         
-				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY, name TEXT)");       
+				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, cat TEXT, isdeductible int, created_date date default CURRENT_DATE)");      
 				}         
 			
 			@Override     
