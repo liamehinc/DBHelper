@@ -11,7 +11,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,7 +67,11 @@ public class Main extends Activity {
             	String locationprovider = mLocationManager.getBestProvider(criteria, true);
             	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
  			    
-	  		    String InsertStringInsertype = "Start";
+
+       	     // Register the listener with the Location Manager to receive location updates
+       	     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
+       	     	
+       	     	String InsertStringInsertype = "Start";
 	  		    Double InsertStringLat = mLocation.getLatitude();
 	  		    Double InsertStringLon = mLocation.getLongitude();
 	  		    String InsertStringCat = "pulse";
@@ -136,9 +139,8 @@ public class Main extends Activity {
         		sb.append("Coordinates in database:\n"); 
         		for (String name : names) { 
         			sb.append(name + ", "); 
-//        			sb.append("\n");
+        			sb.append("\n");
         		} 
-        		sb.append("\n");
         		Toast.makeText(Main.this, sb.toString(), Toast.LENGTH_LONG).show();
 				
         		Log.d("EXAMPLE", "names size - " + names.size()); 
@@ -153,7 +155,7 @@ public class Main extends Activity {
         mLocationListener = new LocationListener() {
     	     public void onLocationChanged(Location mlocation) {
     		     // Called when a new location is found by the network location provider.
-    	    	 
+    	    	
     		      String InsertStringInsertype = "Auto";
     		      Double InsertStringLat = mlocation.getLatitude();
     		      Double InsertStringLon = mlocation.getLongitude();
@@ -162,7 +164,7 @@ public class Main extends Activity {
     		      
     	    	 String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + InsertStringCat + "'," + InsertStringIsDeductible;
     	    	 Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
-    	    	 dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon,InsertStringCat,InsertStringIsDeductible);
+    	    	 dh.insert(InsertString, InsertStringLat, InsertStringLon, InsertStringCat, InsertStringIsDeductible);
     			 
     	     }
     	     
@@ -172,11 +174,41 @@ public class Main extends Activity {
     	     public void onProviderEnabled(String provider) {}
     	
     	     public void onProviderDisabled(String provider) {}
+    	     
         };
 
         
 	}
 	// Close onCreate
+	
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//    	MenuInflater inflater = getMenuInflater();
+//    	inflater.inflate(R.menu.menu, menu);
+//    	return true;
+//    	
+//    }
+//    
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle item selection
+//        switch (item.getItemId()) {
+//        case R.id.Truncate:
+//        	dh.deleteAll();
+//            return true;
+//        case R.id.help:
+//            showHelp();
+//            return true;
+//        default:
+//            return super.onOptionsItemSelected(item);
+//        }
+//    }
+//    
+//    public void showHelp(){
+//    	Toast.makeText(Main.this,"Sorry i can't help you yet",Toast.LENGTH_SHORT).show();
+//    }
 }
+
+
    
 

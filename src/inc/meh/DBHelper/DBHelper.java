@@ -40,7 +40,7 @@ public class DBHelper {
 	
 	public String SelectRow(String str) {
 		String strRow = "";
-		//Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");	
+
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");
 		if (cursor.moveToFirst()) {
 			strRow = cursor.getString(0);
