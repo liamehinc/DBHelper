@@ -139,9 +139,9 @@ public class Main extends Activity {
         		sb.append("Coordinates in database:\n"); 
         		for (String name : names) { 
         			sb.append(name + ", "); 
-        			sb.append("\n");
+        			//sb.append("\n");
         		} 
-        		Toast.makeText(Main.this, sb.toString(), Toast.LENGTH_LONG).show();
+        		//Toast.makeText(Main.this, sb.toString(), Toast.LENGTH_LONG).show();
 				
         		Log.d("EXAMPLE", "names size - " + names.size()); 
         		tv.setText(sb.toString()); 
@@ -176,7 +176,8 @@ public class Main extends Activity {
     	     public void onProviderDisabled(String provider) {}
     	     
         };
-
+	     // Register the listener with the Location Manager to receive location updates
+	     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
         
 	}
 	// Close onCreate
