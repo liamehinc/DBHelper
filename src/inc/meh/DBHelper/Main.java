@@ -182,33 +182,6 @@ public class Main extends Activity {
         
 	}
 	// Close onCreate
-	
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//    	MenuInflater inflater = getMenuInflater();
-//    	inflater.inflate(R.menu.menu, menu);
-//    	return true;
-//    	
-//    }
-//    
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle item selection
-//        switch (item.getItemId()) {
-//        case R.id.Truncate:
-//        	dh.deleteAll();
-//            return true;
-//        case R.id.help:
-//            showHelp();
-//            return true;
-//        default:
-//            return super.onOptionsItemSelected(item);
-//        }
-//    }
-//    
-//    public void showHelp(){
-//    	Toast.makeText(Main.this,"Sorry i can't help you yet",Toast.LENGTH_SHORT).show();
-//    }
 }
 
 
