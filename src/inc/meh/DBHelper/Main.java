@@ -34,6 +34,7 @@ public class Main extends Activity {
 		setContentView(R.layout.main);
 		
 		// initialize the database
+		// worthless change
 		this.dh = new DBHelper(Main.this); 
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     		
@@ -69,7 +70,7 @@ public class Main extends Activity {
  			    
 
        	     // Register the listener with the Location Manager to receive location updates
-       	     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
+       	   //  mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
        	     	
        	     	String InsertStringInsertype = "Start";
 	  		    Double InsertStringLat = mLocation.getLatitude();
