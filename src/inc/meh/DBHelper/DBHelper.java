@@ -41,7 +41,10 @@ public class DBHelper {
 	public String SelectRow(String str) {
 		String strRow = "";
 
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");
+		//Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");
+		
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like '" + str + "%'",null,null,null,"id desc");
+		
 		if (cursor.moveToFirst()) {
 			strRow = cursor.getString(0);
 		}
@@ -50,6 +53,22 @@ public class DBHelper {
         return strRow; 
     }
 
+	public String[] SelectRowArray(String str) {
+		String strRow="";
+
+		//Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");
+		
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like '" + str + "%'",null,null,null,"id desc");
+		
+		if (cursor.moveToFirst()) {
+			strRow = cursor.getString(0);
+		}
+		
+		cursor.close();
+		String[] sReturn=strRow.split(",");
+		
+        return sReturn; 
+    }
 	
 	public List<String> selectAll(String sortstring) {      
 		List<String> list = new ArrayList<String>();

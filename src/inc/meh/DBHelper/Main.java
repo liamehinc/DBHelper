@@ -3,12 +3,15 @@ package inc.meh.DBHelper;
 import java.util.List;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 //import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.*;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,10 +40,19 @@ public class Main extends Activity {
 		// worthless change
 		this.dh = new DBHelper(Main.this); 
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		
+//		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+		
+		if(!mLocationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER ))
+		{
+		    Intent myIntent = new Intent( Settings.ACTION_SECURITY_SETTINGS );
+		    startActivity(myIntent);
+		}
+        
     		
 		final Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+		//criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 		criteria.setPowerRequirement(Criteria.POWER_LOW);
     	
 		// Delete all rows
@@ -66,12 +78,18 @@ public class Main extends Activity {
             	buttonStart.setClickable(false);
             	buttonStop.setClickable(true);
             	String locationprovider = mLocationManager.getBestProvider(criteria, true);
+            	
+            	mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+            	
+            	
             	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
  			    
 
        	     // Register the listener with the Location Manager to receive location updates
-       	   //  mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
-       	     	
+       	   //mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
+       	     
+            	if (mLocation!=null)
+            	{
        	     	String InsertStringInsertype = "Start";
 	  		    Double InsertStringLat = mLocation.getLatitude();
 	  		    Double InsertStringLon = mLocation.getLongitude();
@@ -82,10 +100,18 @@ public class Main extends Activity {
 	  	    	// InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
 	  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
 	  			dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon,InsertStringCat,InsertStringIsDeductible);
+            	
+            	}
+            	else
+            	{
+            		Toast.makeText(Main.this, "turn on your GPS lame-o", Toast.LENGTH_LONG).show();
+    	  			
+            	}
+            	
             }
             
         }); 
-        // Close of Start BUtton Activity
+        // Close of Start Button Activity
         
         // Retrieve 1 row from database
         buttonManualInsert = (Button) findViewById(R.id.buttonManualInsert);
@@ -99,7 +125,8 @@ public class Main extends Activity {
         		String locationprovider = mLocationManager.getBestProvider(criteria, true);
             	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
 
-            	String InsertStringInsertype = "Manual";
+            	
+            	String InsertStringInsertype = "Stop";
   		      	Double InsertStringLat = mLocation.getLatitude();
   		      	Double InsertStringLon = mLocation.getLongitude();
   		      	String InsertStringCat = "pulse";
@@ -121,8 +148,89 @@ public class Main extends Activity {
  			public void onClick(View v) {
  				buttonStop.setClickable(false);
  				buttonStart.setClickable(true);
+ 				
+ 				String sStartLat="";
+ 				String sStartLong="";
+ 				
+ 				String sStopLat="";
+ 				String sStopLong="";
 
  				mLocationManager.removeUpdates(mLocationListener); 
+ 				
+ 				//calculate distance
+ 				tv.setText("calc this");
+
+ 				//get Stop session
+ 		      	 String sFromDB=dh.SelectRow("");
+ 		      	 
+ 		      	tv.setText("sFromDB: " + sFromDB);
+
+ 		      	String[] sFromDBArray=sFromDB.split(",");
+ 		      	 
+ 		      	 //tv.setText("from array: " + sFromDBArray[0]);
+ 		      	
+ 		      	sStartLat=sFromDBArray[1];
+ 		      	sStartLong=sFromDBArray[2];
+ 		      	
+ 		      	sStartLat=sStartLat.replace("'", "");
+ 		      	sStartLong=sStartLong.replace("'", "");
+ 		      	
+ 		      	//Location startLocation = new Location(sStartLong);
+
+ 		      	tv.setText("start Lat: " + sStartLat + " start Long: " + sStartLong);
+ 		      	
+ 		      	
+ 		      	double dStartLat = Double.parseDouble(sStartLat);
+		      	double dStartLong = Double.parseDouble(sStartLong);
+ 		      	
+ 		      	
+		      	float[] results = {999f};
+	  		    
+	  		    //android.location.Location.distanceBetween(dStartLat, dStartLong, dStartLat+1, dStartLat, results);
+		      	
+		      	//android.location.Location.distanceBetween(32, 117, 33, 117, results);
+		      	
+ 		      	//tv.setText("distanceBetween: " + results[0] );
+ 		      	
+ 		      	String locationprovider = mLocationManager.getBestProvider(criteria, true);
+            	
+            	mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+
+            	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
+ 		      	
+ 		      	if (mLocation!=null)
+            	{
+       	     	String InsertStringInsertype = "Stop";
+	  		    Double InsertStringLat = mLocation.getLatitude();
+	  		    Double InsertStringLon = mLocation.getLongitude();
+	  		    String InsertStringCat = "pulse";
+	  		    int InsertStringIsDeductible = 1;
+	  		      
+	  		    //float[] results = {0};
+	  		    
+	  		    android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
+		      	
+	  		    tv.setText("distanceBetween: " + results[0] );
+		      	
+	  		    sStopLat=InsertStringLat.toString();
+	  		    sStopLong=InsertStringLon.toString();
+	  		    
+	  		    tv.setText("start Lat: " + sStartLat + " start Long: " + sStartLong + "stop Lat: "+ sStopLat + "stop Long: "+ sStopLong);
+		      	
+	  		    
+	  		    String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + InsertStringCat + "'," + InsertStringIsDeductible;
+	  	    	// InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
+	  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
+	  			dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon,InsertStringCat,InsertStringIsDeductible);
+            	
+            	}
+            	else
+            	{
+            		Toast.makeText(Main.this, "turn on your GPS lame-o", Toast.LENGTH_LONG).show();
+    	  			
+            	} 
+ 		      	 
+ 				
  			}
  		});
  		// Close of buttonStop.setOnClickListener
@@ -178,7 +286,7 @@ public class Main extends Activity {
     	     
         };
 	     // Register the listener with the Location Manager to receive location updates
-	     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
+	     mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
         
 	}
 	// Close onCreate
