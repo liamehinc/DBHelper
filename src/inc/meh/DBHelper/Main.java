@@ -160,8 +160,8 @@ public class Main extends Activity {
  				//calculate distance
  				tv.setText("calc this");
 
- 				//get this session
- 		      	 String sFromDB=dh.SelectRow("Start");
+ 				//get Stop session
+ 		      	 String sFromDB=dh.SelectRow("");
  		      	 
  		      	tv.setText("sFromDB: " + sFromDB);
 
