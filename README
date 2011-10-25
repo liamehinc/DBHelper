@@ -1,11 +1,21 @@
-made updates
-did this to test...
-test 1
-test 2 will
-test 2b will
-test 3 chad
-test 4 will
-test 5 will
-test 6 will
-test 7 will
+QUICK GITHUB HOW TO:
+
+1) Remote -> Fetch from -> origin (or your remote name)
+2) Merge -> Local merge
+3) Resolve conflicts manually in files within your Eclipse or editor of choice (if any)
+4) Make changes to code
+5) Open GIT->gui
+6) Rescan
+7) Stage Changed
+8) Sign off or modify comments
+9) Commit (commits to local copy)
+10) Push (commits to remote copy)
+
+
+OVERVIEW:
+We are writing a mileage tracker for the Android OS.
+
+
+
+
 
