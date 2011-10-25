@@ -18,6 +18,7 @@ public class DBHelper {
 	private SQLiteDatabase db;      
 	private SQLiteStatement insertStmt;    
 	private static final String INSERT = "insert into " + TABLE_NAME + " (insertype,lat,lon,cat,isdeductible,created_date) values (?,?,?,?,?,?)";      
+//	private static final String INSERT = "insert into " + TABLE_NAME + " (insertype,lat,lon,cat,isdeductible,created_date) values (?,?,?,?,?,?)";
 	public DBHelper(Context context) {       
 		this.context = context;       
 		OpenHelper openHelper = new OpenHelper(this.context);       
@@ -84,7 +85,9 @@ public class DBHelper {
 			@Override     
 			public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 				Log.w("Example", "Upgrading database, this will drop tables and recreate.");   
-				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);          onCreate(db);       
+				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);          onCreate(db);
+			//	alter
+			
 				}   
 			}
 		}

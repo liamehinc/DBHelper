@@ -58,7 +58,8 @@ public class Main extends Activity {
 		// Start Button activity
 		buttonStart = (Button) findViewById(R.id.button1);
         buttonStart.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
             	
                 // Perform action on click
             	tv=(TextView) findViewById(R.id.TextView1); 
@@ -70,7 +71,7 @@ public class Main extends Activity {
  			    
 
        	     // Register the listener with the Location Manager to receive location updates
-       	   //  mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
+       	     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
        	     	
        	     	String InsertStringInsertype = "Start";
 	  		    Double InsertStringLat = mLocation.getLatitude();
@@ -87,7 +88,7 @@ public class Main extends Activity {
         }); 
         // Close of Start BUtton Activity
         
-        // Retrieve 1 row from database
+        // Manual Insert
         buttonManualInsert = (Button) findViewById(R.id.buttonManualInsert);
         buttonManualInsert.setOnClickListener(new View.OnClickListener(){
         	@Override
@@ -95,7 +96,6 @@ public class Main extends Activity {
         		//Perform action on click
         		String InsertString; 
             	
-        		//String coordinates = dh.SelectRow("In");
         		String locationprovider = mLocationManager.getBestProvider(criteria, true);
             	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
 
@@ -112,7 +112,7 @@ public class Main extends Activity {
         	}
         	
         });
- 		// Close Retrieve 1 row from database
+ 		// Close Manual Insert
         
         // Stop location updates
  		buttonStop = (Button) findViewById(R.id.buttonStop1);
@@ -131,7 +131,8 @@ public class Main extends Activity {
         // Retrieve button activity
 		buttonRetrieve = (Button) findViewById(R.id.button2);
         buttonRetrieve.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
                 // Perform action on click
             	tv=(TextView) findViewById(R.id.TextView1); 
           
@@ -154,7 +155,8 @@ public class Main extends Activity {
     	
     	// Define a listener that responds to location updates
         mLocationListener = new LocationListener() {
-    	     public void onLocationChanged(Location mlocation) {
+    	     @Override
+			public void onLocationChanged(Location mlocation) {
     		     // Called when a new location is found by the network location provider.
     	    	
     		      String InsertStringInsertype = "Auto";
@@ -165,20 +167,23 @@ public class Main extends Activity {
     		      
     	    	 String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + InsertStringCat + "'," + InsertStringIsDeductible;
     	    	 Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
-    	    	 dh.insert(InsertString, InsertStringLat, InsertStringLon, InsertStringCat, InsertStringIsDeductible);
+    	    	 dh.insert(InsertStringInsertype, InsertStringLat, InsertStringLon, InsertStringCat, InsertStringIsDeductible);
     			 
     	     }
     	     
     	
-    	     public void onStatusChanged(String provider, int status, Bundle extras) {}
+    	     @Override
+			public void onStatusChanged(String provider, int status, Bundle extras) {}
     	
-    	     public void onProviderEnabled(String provider) {}
+    	     @Override
+			public void onProviderEnabled(String provider) {}
     	
-    	     public void onProviderDisabled(String provider) {}
+    	     @Override
+			public void onProviderDisabled(String provider) {}
     	     
         };
 	     // Register the listener with the Location Manager to receive location updates
-	     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
+	     //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,50, 1, mLocationListener);
         
 	}
 	// Close onCreate
