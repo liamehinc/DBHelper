@@ -11,13 +11,13 @@ import java.util.List;
 
 
 public class DBHelper {      
-	private static final String DATABASE_NAME = "coordinates.db";    
-	private static final int DATABASE_VERSION = 5;    
-	private static final String TABLE_NAME = "location";      
+	private static final String DATABASE_NAME = "trips.db";    
+	private static final int DATABASE_VERSION = 6;    
+	private static final String TABLE_NAME = "coordinates";      
 	private Context context;    
 	private SQLiteDatabase db;      
 	private SQLiteStatement insertStmt;    
-	private static final String INSERT = "insert into " + TABLE_NAME + " (insertype,lat,lon,cat,isdeductible,created_date) values (?,?,?,?,?,?)";      
+	private static final String INSERT = "insert into " + TABLE_NAME + " (insertype,lat,lon,created_date) values (?,?,?,?)";      
 	public DBHelper(Context context) {       
 		this.context = context;       
 		OpenHelper openHelper = new OpenHelper(this.context);       
@@ -25,12 +25,10 @@ public class DBHelper {
 		this.insertStmt = this.db.compileStatement(INSERT);   
 		}     
 	
-	public long insert(String name,Double lat, Double lon, String cat, int isdeductible) {  
-		this.insertStmt.bindString(1, name);
+	public long insert(String insertype,Double lat, Double lon) {  
+		this.insertStmt.bindString(1, insertype);
 		this.insertStmt.bindDouble(2,lat);
 		this.insertStmt.bindDouble(3,lon);
-		this.insertStmt.bindString(4,cat);
-		this.insertStmt.bindDouble(5,isdeductible);
 		return this.insertStmt.executeInsert();    
 		}      
 	
@@ -40,8 +38,6 @@ public class DBHelper {
 	
 	public String SelectRow(String str) {
 		String strRow = "";
-
-		//Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");
 		
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like '" + str + "%'",null,null,null,"id desc");
 		
@@ -52,12 +48,25 @@ public class DBHelper {
 		cursor.close();
         return strRow; 
     }
+	
+	public List<String> selectOneRow(String str) {      
+		List<String> list = new ArrayList<String>();
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype"}, "insertype like '" + str + "%'",null, null, null, null, "id desc");
+		if (cursor.moveToFirst()) {
+				list.add(cursor.getString(0));
+				list.add(cursor.getString(1));
+				list.add(cursor.getString(2));
+				list.add(cursor.getString(3));
+			}
+		if (cursor != null && !cursor.isClosed()) {
+			cursor.close();    
+			}   
+		return list;  
+	}   
 
 	public String[] SelectRowArray(String str) {
 		String strRow="";
 
-		//Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like " + "'" + str + "%'",null,null,null,"id desc");
-		
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like '" + str + "%'",null,null,null,"id desc");
 		
 		if (cursor.moveToFirst()) {
@@ -72,14 +81,13 @@ public class DBHelper {
 	
 	public List<String> selectAll(String sortstring) {      
 		List<String> list = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon", "cat", "isdeductible", "created_date"},null, null, null, null, sortstring);
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","created_date"},null, null, null, null, sortstring);
 		if (cursor.moveToFirst()) {
 			do {
 				list.add(cursor.getString(0));
 				list.add(cursor.getString(1));
 				list.add(cursor.getString(2));
 				list.add(cursor.getString(3));
-				list.add(cursor.getString(4));
 				}
 			while (cursor.moveToNext());
 			}
@@ -97,7 +105,7 @@ public class DBHelper {
 			
 			@Override      
 			public void onCreate(SQLiteDatabase db) {         
-				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, cat TEXT, isdeductible int, created_date date default CURRENT_DATE)");      
+				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, created_date date default CURRENT_DATE)");      
 				}         
 			
 			@Override     
