@@ -12,12 +12,12 @@ import java.util.List;
 
 public class DBHelper {      
 	private static final String DATABASE_NAME = "trips.db";    
-	private static final int DATABASE_VERSION = 6;    
+	private static final int DATABASE_VERSION = 7;    
 	private static final String TABLE_NAME = "coordinates";      
 	private Context context;    
 	private SQLiteDatabase db;      
 	private SQLiteStatement insertStmt;    
-	private static final String INSERT = "insert into " + TABLE_NAME + " (insertype,lat,lon,created_date) values (?,?,?,?)";      
+	private static final String INSERT = "insert into " + TABLE_NAME + " (insertype,lat,lon,dist2Prev,cumDist,created_date) values (?,?,?,?,?,?)";      
 	public DBHelper(Context context) {       
 		this.context = context;       
 		OpenHelper openHelper = new OpenHelper(this.context);       
@@ -25,10 +25,12 @@ public class DBHelper {
 		this.insertStmt = this.db.compileStatement(INSERT);   
 		}     
 	
-	public long insert(String insertype,Double lat, Double lon) {  
+	public long insert(String insertype,Double lat, Double lon, Double dist2PrevCoord, Double cumDist) {  
 		this.insertStmt.bindString(1, insertype);
 		this.insertStmt.bindDouble(2,lat);
 		this.insertStmt.bindDouble(3,lon);
+		this.insertStmt.bindDouble(4,dist2PrevCoord);
+		this.insertStmt.bindDouble(5,cumDist);
 		return this.insertStmt.executeInsert();    
 		}      
 	
@@ -51,7 +53,7 @@ public class DBHelper {
 	
 	public List<String> selectOneRow(String whereClause) {      
 		List<String> list = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype","lat","lon"}, "insertype like '" + whereClause + "%'",null, null, null, "id desc","1");
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype","lat","lon","dist2Prev","cumDist"}, "insertype like '" + whereClause + "%'",null, null, null, "id desc","1");
 		if (cursor.moveToFirst()) {
 				list.add(cursor.getString(0));
 				list.add(cursor.getString(1));
@@ -62,25 +64,10 @@ public class DBHelper {
 			}   
 		return list;  
 	}   
-	// select insertype,lat,lon,created_date from coordinates where insertype like 'Auto%' order by id desc limit 1
-	public String[] SelectRowArray(String str) {
-		String strRow="";
-
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like '" + str + "%'",null,null,null,"id desc");
-		
-		if (cursor.moveToFirst()) {
-			strRow = cursor.getString(0);
-		}
-		
-		cursor.close();
-		String[] sReturn=strRow.split(",");
-		
-        return sReturn; 
-    }
 	
 	public List<String> selectAll(String sortstring) {      
 		List<String> list = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","created_date"},null, null, null, null, sortstring);
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","dist2Prev","cumDist","created_date"},null, null, null, null, sortstring);
 		if (cursor.moveToFirst()) {
 			do {
 				list.add(cursor.getString(0));
@@ -105,7 +92,7 @@ public class DBHelper {
 			
 			@Override      
 			public void onCreate(SQLiteDatabase db) {         
-				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, created_date date default CURRENT_DATE)");      
+				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, dist2Prev real, cumPrev real, created_date date default CURRENT_DATE)");      
 				}         
 			
 			@Override     
