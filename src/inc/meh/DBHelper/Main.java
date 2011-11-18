@@ -81,7 +81,7 @@ public class Main extends Activity {
        	     
             	if (mLocation!=null)
             	{
-         	buttonStart.setClickable(false);
+            		buttonStart.setClickable(false);
                 	buttonStop.setClickable(true);
 
             		String InsertStringInsertype = "Start";
@@ -90,25 +90,18 @@ public class Main extends Activity {
             		String InsertStringCat = "pulse";
             		int InsertStringIsDeductible = 1;
 	  		      
-<<<<<<< HEAD
-	  		    String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + InsertStringCat + "'," + InsertStringIsDeductible;
-	  	    	// InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
-	  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
-	  			dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon);
-=======
-            		String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + InsertStringCat + "'," + InsertStringIsDeductible;
-            		// 	InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
-            		Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
-            		dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon,InsertStringCat,InsertStringIsDeductible);
->>>>>>> efbba9060d4b316bbc862e0ac5616d06484c5b8b
-            	
+		  		    String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + InsertStringCat + "'," + InsertStringIsDeductible;
+		  	    	// InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
+		  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
+		  			dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon);
+		  		
+	            	// 	InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
+	            	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();            	
             	}
             	else
             	{
-            		Toast.makeText(Main.this, "turn on your GPS lame-o", Toast.LENGTH_LONG).show();
-    	  			
+            		Toast.makeText(Main.this, "turn on your GPS lame-o", Toast.LENGTH_LONG).show();	
             	}
-            	
             }
             
         }); 
@@ -177,14 +170,7 @@ public class Main extends Activity {
  				tv.setText("calc this");
 
  				//get Stop session
- 		      	//String sFromDB="'Start','32','-117','pulse',1";//dh.SelectRow("Start");
- 				
- 				String sFromDB=dh.SelectRow("Start");
- 		      	 
-// 		      	tv.setText("sFromDB: " + sFromDB);
-
- //		      	String[] sFromDBArray=sFromDB.split(",");
- 		      	
+ 		      	 		      	
             	List<String> names = dh.selectOneRow("Start"); 
         		StringBuilder sb = new StringBuilder(); 
         		sb.append("Coordinates in database:\n"); 
@@ -192,11 +178,19 @@ public class Main extends Activity {
         			sb.append(name + ", "); 
         			//sb.append("\n");
         		} 
- 		      	 
- 		      	 //tv.setText("from array: " + sFromDBArray[0]);
  		      	
-// 		      	sStartLat=sFromDBArray[1];
- //		      	sStartLong=sFromDBArray[2];
+        		String sFromDB=sb.toString();
+        		
+        		//String sFromDB="'Start','32','-117','pulse',1";//dh.SelectRow("Start");
+			  	 
+ 		      	tv.setText("sFromDB: " + sFromDB);
+
+ 		      	String[] sFromDBArray=sFromDB.split(",");
+
+        		
+ 		      	
+ 		      	sStartLat=sFromDBArray[1];
+		      	sStartLong=sFromDBArray[2];
  		      	tv.setText("start Lat: " + sStartLat + " start Long: " + sStartLong);
  		      	
  		      	sStartLat=sStartLat.replace("'", "");
@@ -212,7 +206,7 @@ public class Main extends Activity {
  		      	
 		      	float[] results = {999f};
 	  		    
-	  		    android.location.Location.distanceBetween(dStartLat, dStartLong, dStartLat+1, dStartLat, results);
+//	  		    android.location.Location.distanceBetween(dStartLat, dStartLong, dStartLat+1, dStartLat, results);
 		      	
 		      	//android.location.Location.distanceBetween(32, 117, 33, 117, results);
 		      	
@@ -229,12 +223,10 @@ public class Main extends Activity {
        	     	String InsertStringInsertype = "Stop";
 	  		    Double InsertStringLat = mLocation.getLatitude();
 	  		    Double InsertStringLon = mLocation.getLongitude();
-	  		    String InsertStringCat = "pulse";
-	  		    int InsertStringIsDeductible = 1;
 	  		      
-	  		    //float[] results = {0};
 	  		
-	  		  android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
+	  		    //show me the money!!!
+	  		    android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
 		      	
 	  		    tv.setText("distanceBetween: " + results[0] );
 		      	
@@ -242,10 +234,10 @@ public class Main extends Activity {
 	  		    sStopLong=InsertStringLon.toString();
 	  		    
 	  		    tv.setText("start Lat: " + sStartLat + " start Long: " + sStartLong + "stop Lat: "+ sStopLat + "stop Long: "+ sStopLong);
-	  		    tv.setText("distanceBetween: " + results[0] + "start Lat: " + sStartLat + " start Long: " + sStartLong + "stop Lat: "+ sStopLat + "stop Long: "+ sStopLong);
+	  		    tv.setText("distanceBetween: " + results[0] + "\n\nstart Lat: " + sStartLat + " start Long: " + sStartLong + "\nstop Lat: "+ sStopLat + "stop Long: "+ sStopLong);
 		      		  		    
-	  		    String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + InsertStringCat + "'," + InsertStringIsDeductible;
-	  	    	// InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
+	  		    String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','";
+
 	  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
 	  			dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon);
             	

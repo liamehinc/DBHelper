@@ -87,6 +87,7 @@ public class DBHelper {
 				list.add(cursor.getString(1));
 				list.add(cursor.getString(2));
 				list.add(cursor.getString(3));
+				//list.add("\n");
 				}
 			while (cursor.moveToNext());
 			}
