@@ -49,9 +49,9 @@ public class DBHelper {
         return strRow; 
     }
 	
-	public List<String> selectOneRow(String str) {      
+	public List<String> selectOneRow(String whereClause) {      
 		List<String> list = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype"}, "insertype like '" + str + "%'",null, null, null, null, "id desc");
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype","lat","lon"}, "insertype like '" + whereClause + "%'",null, null, null, "id desc","1");
 		if (cursor.moveToFirst()) {
 				list.add(cursor.getString(0));
 				list.add(cursor.getString(1));

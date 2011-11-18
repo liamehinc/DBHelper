@@ -24,6 +24,7 @@ public class Main extends Activity {
 	Button buttonDelete;
 	Button buttonManualInsert;
 	Button buttonRetrieve;
+	Button buttonRetrieve1;
 	
     /** Called when the activity is first created. */
 	@Override
@@ -33,19 +34,15 @@ public class Main extends Activity {
 		setContentView(R.layout.main);
 		
 		// initialize the database
-		// worthless change
 		this.dh = new DBHelper(Main.this); 
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		
-//		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
 		
 		if(!mLocationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER ))
 		{
 		    Intent myIntent = new Intent( Settings.ACTION_SECURITY_SETTINGS );
 		    startActivity(myIntent);
 		}
-        
-    		
+        		
 		final Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		//criteria.setAccuracy(Criteria.ACCURACY_COARSE);
@@ -109,7 +106,7 @@ public class Main extends Activity {
         }); 
         // Close of Start Button Activity
         
-        // Retrieve 1 row from database
+        //Manual Insert
         buttonManualInsert = (Button) findViewById(R.id.buttonManualInsert);
         buttonManualInsert.setOnClickListener(new View.OnClickListener(){
         	@Override
@@ -135,8 +132,21 @@ public class Main extends Activity {
         	}
         	
         });
- 		// Close Retrieve 1 row from database
+ 		// Close Manual Insert
         
+        // Retrieve1 button
+        buttonRetrieve1 = (Button) findViewById(R.id.button4);
+        buttonRetrieve1.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+				List<String> OneRow = dh.selectOneRow("Auto");
+				tv.setText(OneRow.toString());
+			}
+		});
+        		
         // Stop location updates
  		buttonStop = (Button) findViewById(R.id.buttonStop1);
  		buttonStop.setOnClickListener(new View.OnClickListener() {
