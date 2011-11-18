@@ -56,14 +56,13 @@ public class DBHelper {
 				list.add(cursor.getString(0));
 				list.add(cursor.getString(1));
 				list.add(cursor.getString(2));
-				list.add(cursor.getString(3));
 			}
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();    
 			}   
 		return list;  
 	}   
-
+	// select insertype,lat,lon,created_date from coordinates where insertype like 'Auto%' order by id desc limit 1
 	public String[] SelectRowArray(String str) {
 		String strRow="";
 
