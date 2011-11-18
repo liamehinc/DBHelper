@@ -12,7 +12,7 @@ import java.util.List;
 
 public class DBHelper {      
 	private static final String DATABASE_NAME = "trips.db";    
-	private static final int DATABASE_VERSION = 7;    
+	private static final int DATABASE_VERSION = 8;    
 	private static final String TABLE_NAME = "coordinates";      
 	private Context context;    
 	private SQLiteDatabase db;      
@@ -56,8 +56,12 @@ public class DBHelper {
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype","lat","lon","dist2Prev","cumDist"}, "insertype like '" + whereClause + "%'",null, null, null, "id desc","1");
 		if (cursor.moveToFirst()) {
 				list.add(cursor.getString(0));
-				list.add(cursor.getString(1));
-				list.add(cursor.getString(2));
+				//list.add(cursor.getString(1));
+				list.add(Double.toString(cursor.getDouble(1)));
+				list.add(Double.toString(cursor.getDouble(2)));
+				list.add(Double.toString(cursor.getDouble(3)));
+				list.add(Double.toString(cursor.getDouble(4)));
+				
 			}
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();    
@@ -92,7 +96,7 @@ public class DBHelper {
 			
 			@Override      
 			public void onCreate(SQLiteDatabase db) {         
-				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, dist2Prev real, cumPrev real, created_date date default CURRENT_DATE)");      
+				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, dist2Prev real, cumDist real, created_date date default CURRENT_DATE)");      
 				}         
 			
 			@Override     

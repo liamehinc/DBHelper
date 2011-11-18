@@ -71,13 +71,11 @@ public class Main extends Activity {
             	String locationprovider = mLocationManager.getBestProvider(criteria, true);
             	
             	mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
-            	
-            	
-            	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
- 			    
 
-       	     // Register the listener with the Location Manager to receive location updates
-       	   //mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
+            	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
+
+            	// Register the listener with the Location Manager to receive location updates
+            	//mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50, 1, mLocationListener);
        	     
             	if (mLocation!=null)
             	{
@@ -90,15 +88,15 @@ public class Main extends Activity {
             		  		      
 		  		    String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','";
 		  	    	// InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
-		  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
+		  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 		  			dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon,0.0,0.0);
 		  		
 	            	// 	InsertString = "Auto: " + mlocation.getLatitude() + ", " + mlocation.getLongitude();
-	            	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();            	
+	            	Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();            	
             	}
             	else
             	{
-            		Toast.makeText(Main.this, "turn on your GPS lame-o", Toast.LENGTH_LONG).show();	
+            		Toast.makeText(Main.this, "turn on your GPS lame-o", Toast.LENGTH_SHORT).show();	
             	}
             }
             
@@ -117,17 +115,22 @@ public class Main extends Activity {
         		String locationprovider = mLocationManager.getBestProvider(criteria, true);
             	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
 
+            	if (mLocation!=null)
+            	{
+	            	String InsertStringInsertype = "Manual";
+	  		      	Double InsertStringLat = mLocation.getLatitude();
+	  		      	Double InsertStringLon = mLocation.getLongitude();
+		  		  	Double dist2Prev = 0.0;
+		    		Double cumDist = 1.0;
+	  		      
+	  		      	InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + dist2Prev + "','" + cumDist;
+	
+	  		      	Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+	  			    dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon,dist2Prev,cumDist);
+	            } else {
+	            	Toast.makeText(Main.this, "I can't insert this location because I don't know where you are.", Toast.LENGTH_SHORT).show();
+	            }
             	
-            	String InsertStringInsertype = "Manual";
-  		      	Double InsertStringLat = mLocation.getLatitude();
-  		      	Double InsertStringLon = mLocation.getLongitude();
-	  		  	Double dist2Prev = 0.0;
-	    		Double cumDist = 1.0;
-  		      
-  		      	InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + dist2Prev + "','" + cumDist;
-
-  		      	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
-  			    dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon,dist2Prev,cumDist);
         	}
         	
         });
@@ -136,18 +139,15 @@ public class Main extends Activity {
         // Retrieve1 button
         buttonRetrieve1 = (Button) findViewById(R.id.button4);
         buttonRetrieve1.setOnClickListener(new View.OnClickListener() {
-			
-        	
-        
+
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-				List<String> OneRow = dh.selectOneRow("Auto");
+				List<String> OneRow = dh.selectOneRow("");
 				tv.setText(OneRow.toString());
 			}
 		});
-        		
+        
+
         // Stop location updates
  		buttonStop = (Button) findViewById(R.id.buttonStop1);
  		buttonStop.setOnClickListener(new View.OnClickListener() {
@@ -167,49 +167,15 @@ public class Main extends Activity {
  				//calculate distance
  				tv.setText("calc this");
 
- 				//get Stop session
- 		      	 		      	
-            	List<String> names = dh.selectOneRow("Start"); 
-        		StringBuilder sb = new StringBuilder(); 
-        		sb.append("Coordinates in database:\n"); 
-        		for (String name : names) { 
-        			sb.append(name + ", "); 
-        			//sb.append("\n");
-        		} 
- 		      	
-        		String sFromDB=sb.toString();
-        		
-        		//String sFromDB="'Start','32','-117','pulse',1";//dh.SelectRow("Start");
-			  	 
- 		      	tv.setText("sFromDB: " + sFromDB);
+ 				//get last location in database
+ 				double[] dLastLocation = getLastLocation();
+ 				
+ 				//break out lat and long
+ 				double dStartLat = dLastLocation[0];
+		      	double dStartLong = dLastLocation[1];
 
- 		      	String[] sFromDBArray=sFromDB.split(",");
-
-        		
- 		      	
- 		      	sStartLat=sFromDBArray[1];
-		      	sStartLong=sFromDBArray[2];
- 		      	tv.setText("start Lat: " + sStartLat + " start Long: " + sStartLong);
- 		      	
- 		      	sStartLat=sStartLat.replace("'", "");
- 		      	sStartLong=sStartLong.replace("'", "");
- 		      	
- 		      	//Location startLocation = new Location(sStartLong);
-
- 		      	tv.setText("start Lat: " + sStartLat + " start Long: " + sStartLong);
- 		      	
-
- 		      	double dStartLat = Double.parseDouble(sStartLat);
-		      	double dStartLong = Double.parseDouble(sStartLong);
- 		      	
 		      	float[] results = {999f};
 	  		    
-//	  		    android.location.Location.distanceBetween(dStartLat, dStartLong, dStartLat+1, dStartLat, results);
-		      	
-		      	//android.location.Location.distanceBetween(32, 117, 33, 117, results);
-		      	
- 		      	tv.setText("distanceBetween: " + results[0] );
- 		      	
  		      	String locationprovider = mLocationManager.getBestProvider(criteria, true);
             	
             	mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
@@ -221,10 +187,41 @@ public class Main extends Activity {
 	       	     	String InsertStringInsertype = "Stop";
 		  		    Double InsertStringLat = mLocation.getLatitude();
 		  		    Double InsertStringLon = mLocation.getLongitude();
-		  			Double dist2Prev = 0.0;
-	        		Double cumDist = 1.0;
-		  		
-		  		    //show me the money!!!
+		  			
+		    		//get last location in database
+	 				//double[] dLastLocation = getLastLocation();
+	 				
+	 				Double dist2Prev = 0.0;
+		      		Double cumDist = 0.0;
+		      		
+	 				//is the db empty?
+	 				if (dLastLocation != null ) {
+
+	 					//break out lat and long
+		 				//double dStartLat = dLastLocation[0];
+				      	//double dStartLong = dLastLocation[1];
+	
+				      	//double dDist2Prev = dLastLocation[2];
+				      	double dCumDist = dLastLocation[3];
+				      	
+				      	if (dCumDist != 0)
+				      		cumDist=dCumDist;
+	
+				      	//float[] results = {999f};
+
+				      	//get distance between here and last record in database
+			  		    android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
+				    
+			  		   // float fDistanceBeween= results[0];
+				      	
+			  		    double dDist2Prev = results[0];
+			  		    
+			  		    dist2Prev=dDist2Prev;
+			  		    
+			  		    cumDist+=dDist2Prev;
+
+	 				}		  		
+	        		//show me the money!!!
 		  		    android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
 			      	
 		  		    tv.setText("distanceBetween: " + results[0] );
@@ -232,18 +229,21 @@ public class Main extends Activity {
 		  		    sStopLat=InsertStringLat.toString();
 		  		    sStopLong=InsertStringLon.toString();
 		  		    
+		  		    sStartLat=Double.toString(dStartLat);
+		  		    sStartLong=Double.toString(dStartLong);
+		  		    
 		  		    tv.setText("start Lat: " + sStartLat + " start Long: " + sStartLong + "stop Lat: "+ sStopLat + "stop Long: "+ sStopLong);
 		  		    tv.setText("distanceBetween: " + results[0] + "\n\nstart Lat: " + sStartLat + " start Long: " + sStartLong + "\nstop Lat: "+ sStopLat + "stop Long: "+ sStopLong);
 			      		  		    
 		  		    String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','";
 	
-		  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
+		  	    	Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 		  			dh.insert(InsertStringInsertype,InsertStringLat,InsertStringLon,dist2Prev,cumDist);
 	            	
             	}
             	else
             	{
-            		Toast.makeText(Main.this, "turn on your GPS lame-o", Toast.LENGTH_LONG).show();
+            		Toast.makeText(Main.this, "turn on your GPS lame-o", Toast.LENGTH_SHORT).show();
             	}  
  			}
  		});
@@ -264,7 +264,7 @@ public class Main extends Activity {
         			sb.append(name + ", "); 
         			//sb.append("\n");
         		} 
-        		//Toast.makeText(Main.this, sb.toString(), Toast.LENGTH_LONG).show();
+        		//Toast.makeText(Main.this, sb.toString(), Toast.LENGTH_SHORT).show();
 				
         		Log.d("EXAMPLE", "names size - " + names.size()); 
         		tv.setText(sb.toString()); 
@@ -275,6 +275,7 @@ public class Main extends Activity {
 
     	
     	// Define a listener that responds to location updates
+        //i.e. auto update
         mLocationListener = new LocationListener() {
     	     public void onLocationChanged(Location mlocation) {
     		     // Called when a new location is found by the network location provider.
@@ -282,11 +283,42 @@ public class Main extends Activity {
 	    		 String InsertStringInsertype = "Auto";
 	    		 Double InsertStringLat = mlocation.getLatitude();
 	    		 Double InsertStringLon = mlocation.getLongitude();
-		    	 Double dist2Prev = 0.0;
-	        	 Double cumDist = 1.0;
-    		      
+		    	
+	    		//get last location in database
+	 				double[] dLastLocation = getLastLocation();
+	 				
+	 				Double dist2Prev = 0.0;
+		      		Double cumDist = 0.0;
+		      		
+	 				//is the db empty?
+	 				if (dLastLocation != null ) {
+
+	 					//break out lat and long
+		 				double dStartLat = dLastLocation[0];
+				      	double dStartLong = dLastLocation[1];
+	
+				      	//double dDist2Prev = dLastLocation[3];
+				      	double dCumDist = dLastLocation[4];
+	
+				      	float[] results = {999f};
+
+				      	//get distance between here and last record in database
+			  		    android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
+				    
+			  		   // float fDistanceBeween= results[0];
+				      	
+			  		    double dDist2Prev = results[0];
+			  		    
+			  		    dist2Prev=dDist2Prev;
+			  		    
+			  		    cumDist+=dDist2Prev;
+
+	 				}
+	 				
+	 				
+	 				
     	    	 String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + dist2Prev + "'," + cumDist;
-    	    	 Toast.makeText(Main.this, InsertString, Toast.LENGTH_LONG).show();
+    	    	 Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
     	    	 dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev,cumDist);
     			 
     	     }
@@ -304,6 +336,45 @@ public class Main extends Activity {
         
 	}
 	// Close onCreate
+
+	//helper method to get last location in db for breadcrumbs
+	private double[] getLastLocation()
+	{
+
+		String sStartLat="";
+		String sStartLong="";
+
+       	List<String> names = dh.selectOneRow(""); 
+		StringBuilder sb = new StringBuilder(); 
+
+		for (String name : names) { 
+			sb.append(name + ", "); 
+		} 
+	      	
+		String sFromDB=sb.toString();
+		
+      	String[] sFromDBArray=sFromDB.split(",");
+
+      	sStartLat=sFromDBArray[1];
+      	sStartLong=sFromDBArray[2];
+      	
+      	String sDist2Prev=sFromDBArray[3];
+      	String sCumDist=sFromDBArray[4];
+      	
+      	sStartLat=sStartLat.replace("'", "");
+      	sStartLong=sStartLong.replace("'", "");
+
+      	double dStartLat = Double.parseDouble(sStartLat);
+      	double dStartLong = Double.parseDouble(sStartLong);
+      	
+      	double dDist2Prev = Double.parseDouble(sDist2Prev);
+      	double dCumDist = Double.parseDouble(sCumDist);
+      	
+      	double[] dReturn={dStartLat, dStartLong, dDist2Prev, dCumDist};
+		
+		return dReturn;
+	
+	}
 }
 
 

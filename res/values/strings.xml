@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, DBHelper!</string>
-    <string name="app_name">DBHelper</string>
+    <string name="hello">Track my mileage bitch!!!</string>
+    <string name="app_name">MileageTracker</string>
     <string name="Insert">Start tracker</string>
     <string name="Retrieve">Retrieve Coordinate Entry</string>
     <string name="Retrieve1">Retrieve 1 coordinate entry</string>
