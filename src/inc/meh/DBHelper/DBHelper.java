@@ -56,7 +56,6 @@ public class DBHelper {
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype","lat","lon","dist2Prev","cumDist"}, "insertype like '" + whereClause + "%'",null, null, null, "id desc","1");
 		if (cursor.moveToFirst()) {
 				list.add(cursor.getString(0));
-				//list.add(cursor.getString(1));
 				list.add(Double.toString(cursor.getDouble(1)));
 				list.add(Double.toString(cursor.getDouble(2)));
 				list.add(Double.toString(cursor.getDouble(3)));
@@ -75,9 +74,10 @@ public class DBHelper {
 		if (cursor.moveToFirst()) {
 			do {
 				list.add(cursor.getString(0));
-				list.add(cursor.getString(1));
-				list.add(cursor.getString(2));
-				list.add(cursor.getString(3));
+				list.add(Double.toString(cursor.getDouble(1)));
+				list.add(Double.toString(cursor.getDouble(2)));
+				list.add(Double.toString(cursor.getDouble(3)));
+				list.add(Double.toString(cursor.getDouble(4)));
 				//list.add("\n");
 				}
 			while (cursor.moveToNext());

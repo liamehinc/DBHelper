@@ -115,14 +115,33 @@ public class Main extends Activity {
         		String locationprovider = mLocationManager.getBestProvider(criteria, true);
             	Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
 
+            	double dist2Prev = 0.0;
+            	double cumDist = 0.0;
+            	
             	if (mLocation!=null)
             	{
 	            	String InsertStringInsertype = "Manual";
 	  		      	Double InsertStringLat = mLocation.getLatitude();
 	  		      	Double InsertStringLon = mLocation.getLongitude();
-		  		  	Double dist2Prev = 0.0;
-		    		Double cumDist = 1.0;
-	  		      
+
+	  		      	//get last location in database
+		 				double[] dLastLocation = getLastLocation();
+		 				double dStartLat = dLastLocation[0]; // previous lat
+		 				double dStartLon = dLastLocation[1]; // previous lon
+		 				//double dist2Prev = dLastLocation[2]; // previous segment dist
+		 				//	double cumDist = cumDist + dLastLocation[3]; // previous cum dist
+
+		 				float[] results = {999f};
+		 				
+		 				if (dLastLocation != null){
+			 				//get distance between here and last record in database
+				  		    android.location.Location.distanceBetween(dStartLat, dStartLon, InsertStringLat, InsertStringLon, results);
+				  		    dist2Prev = results[0];
+			 				cumDist = dLastLocation[3] + dist2Prev; 
+			 				
+		 				}
+			  		    
+		 				
 	  		      	InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + dist2Prev + "','" + cumDist;
 	
 	  		      	Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
@@ -221,10 +240,10 @@ public class Main extends Activity {
 			  		    cumDist+=dDist2Prev;
 
 	 				}		  		
-	        		//show me the money!!!
+	        		//show me the money!!!   why is this here?  isn't above in the if db is not empty sectoin?
 		  		    android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
 			      	
-		  		    tv.setText("distanceBetween: " + results[0] );
+		  		    tv.setText("distanceBetween: " + results[0] );  
 			      	
 		  		    sStopLat=InsertStringLat.toString();
 		  		    sStopLong=InsertStringLon.toString();
@@ -279,17 +298,18 @@ public class Main extends Activity {
         mLocationListener = new LocationListener() {
     	     public void onLocationChanged(Location mlocation) {
     		     // Called when a new location is found by the network location provider.
-    	    	
+    	
 	    		 String InsertStringInsertype = "Auto";
 	    		 Double InsertStringLat = mlocation.getLatitude();
 	    		 Double InsertStringLon = mlocation.getLongitude();
-		    	
+	    	 
 	    		//get last location in database
 	 				double[] dLastLocation = getLastLocation();
-	 				
+	 			
+	 				// initialize distances
 	 				Double dist2Prev = 0.0;
 		      		Double cumDist = 0.0;
-		      		
+		      	/*	
 	 				//is the db empty?
 	 				if (dLastLocation != null ) {
 
@@ -298,7 +318,7 @@ public class Main extends Activity {
 				      	double dStartLong = dLastLocation[1];
 	
 				      	//double dDist2Prev = dLastLocation[3];
-				      	double dCumDist = dLastLocation[4];
+				      	double dCumDist = dLastLocation[3];  // fails on auto replaced 4 with 3
 	
 				      	float[] results = {999f};
 
@@ -315,11 +335,11 @@ public class Main extends Activity {
 
 	 				}
 	 				
-	 				
+	 				*/
 	 				
     	    	 String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + dist2Prev + "'," + cumDist;
     	    	 Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-    	    	 dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev,cumDist);
+    	    	 dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev,cumDist);     	    	 
     			 
     	     }
     	     
@@ -332,7 +352,7 @@ public class Main extends Activity {
     	     
         };
 	     // Register the listener with the Location Manager to receive location updates
-	     mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+	     //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
         
 	}
 	// Close onCreate
@@ -367,7 +387,7 @@ public class Main extends Activity {
       	double dStartLat = Double.parseDouble(sStartLat);
       	double dStartLong = Double.parseDouble(sStartLong);
       	
-      	double dDist2Prev = Double.parseDouble(sDist2Prev);
+      	double dDist2Prev = Double.parseDouble(sDist2Prev); //Double.parseDouble(sDist2Prev);  // breaking here on auto with gps on
       	double dCumDist = Double.parseDouble(sCumDist);
       	
       	double[] dReturn={dStartLat, dStartLong, dDist2Prev, dCumDist};
