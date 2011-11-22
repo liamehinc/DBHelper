@@ -280,6 +280,12 @@ public class Main extends Activity {
     	     public void onLocationChanged(Location mlocation) {
     		     // Called when a new location is found by the network location provider.
     	    	
+    	    	 //make sure there is an active trip b4 logging to db
+    	    	 
+    	    	 if (isTripActive())
+    	    	 {
+    	    		 
+    	    	 
 	    		 String InsertStringInsertype = "Auto";
 	    		 Double InsertStringLat = mlocation.getLatitude();
 	    		 Double InsertStringLon = mlocation.getLongitude();
@@ -298,7 +304,7 @@ public class Main extends Activity {
 				      	double dStartLong = dLastLocation[1];
 	
 				      	//double dDist2Prev = dLastLocation[3];
-				      	double dCumDist = dLastLocation[4];
+				      	double dCumDist = dLastLocation[3];
 	
 				      	float[] results = {999f};
 
@@ -312,15 +318,19 @@ public class Main extends Activity {
 			  		    dist2Prev=dDist2Prev;
 			  		    
 			  		    cumDist+=dDist2Prev;
-
+	 				
 	 				}
 	 				
 	 				
 	 				
-    	    	 String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + dist2Prev + "'," + cumDist;
+    	    	 //String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','" + dist2Prev + "'," + cumDist;
+	 				
+ 				 String InsertString = InsertStringInsertype + "," + InsertStringLat + "," + InsertStringLon + "," + dist2Prev + "," + cumDist;
     	    	 Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
     	    	 dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev,cumDist);
     			 
+    	    	 }//end isTripActive()
+	 				
     	     }
     	     
     	
@@ -338,14 +348,30 @@ public class Main extends Activity {
 	// Close onCreate
 
 	//helper method to get last location in db for breadcrumbs
+	private boolean isTripActive()
+	{
+		if (buttonStart.isClickable()==false && buttonStop.isClickable())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+			
+	}
+	
+	//helper method to get last location in db for breadcrumbs
 	private double[] getLastLocation()
 	{
 
 		String sStartLat="";
 		String sStartLong="";
 
-       	List<String> names = dh.selectOneRow(""); 
-		StringBuilder sb = new StringBuilder(); 
+       	List<String> dbRow = dh.selectOneRow(""); 
+		
+       	/*
+       	StringBuilder sb = new StringBuilder(); 
 
 		for (String name : names) { 
 			sb.append(name + ", "); 
@@ -354,12 +380,15 @@ public class Main extends Activity {
 		String sFromDB=sb.toString();
 		
       	String[] sFromDBArray=sFromDB.split(",");
-
-      	sStartLat=sFromDBArray[1];
-      	sStartLong=sFromDBArray[2];
+		*/
+       	
+       	//String[] sFromDBArray=(String[]) dbRow.toArray();
+       	
+      	sStartLat=dbRow.get(1);//sFromDBArray[1];
+      	sStartLong=dbRow.get(2);//sFromDBArray[2];
       	
-      	String sDist2Prev=sFromDBArray[3];
-      	String sCumDist=sFromDBArray[4];
+      	String sDist2Prev=dbRow.get(3);//sFromDBArray[3];
+      	String sCumDist=dbRow.get(4);//sFromDBArray[4];
       	
       	sStartLat=sStartLat.replace("'", "");
       	sStartLong=sStartLong.replace("'", "");
