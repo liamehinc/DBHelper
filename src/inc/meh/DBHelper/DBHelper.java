@@ -38,7 +38,7 @@ public class DBHelper {
 			this.db.delete(TABLE_NAME, null, null);    
 			}      
 	
-	public String SelectRow(String str) {
+/*	public String SelectRow(String str) {
 		String strRow = "";
 		
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] {"insertype"}, "insertype like '" + str + "%'",null,null,null,"id desc");
@@ -50,7 +50,7 @@ public class DBHelper {
 		cursor.close();
         return strRow; 
     }
-	
+*/	
 	public List<String> selectOneRow(String whereClause) {      
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype","lat","lon","dist2Prev","cumDist"}, "insertype like '" + whereClause + "%'",null, null, null, "id desc","1");
@@ -78,7 +78,6 @@ public class DBHelper {
 				list.add(Double.toString(cursor.getDouble(2)));
 				list.add(Double.toString(cursor.getDouble(3)));
 				list.add(Double.toString(cursor.getDouble(4)));
-				//list.add("\n");
 				}
 			while (cursor.moveToNext());
 			}
