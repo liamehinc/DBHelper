@@ -121,17 +121,21 @@ public class Main extends Activity {
 					String InsertStringInsertype = "Manual";
 					Double InsertStringLat = mLocation.getLatitude();
 					Double InsertStringLon = mLocation.getLongitude();
-					Double dist2Prev = 0.0;
-					Double cumDist = 0.0;
+					
+					double[] calcedDist = CalculateDistance(InsertStringLat, InsertStringLon);
+					
+					// String InsertString = InsertStringInsertype + ",'" +
+					// InsertStringLat + "','" + InsertStringLon + "','" +
+					// dist2Prev + "'," + cumDist;
+					double dist2Prev = calcedDist[0];
+					double dcumDist = calcedDist[1];
+					
+					InsertString = InsertStringInsertype + "," + InsertStringLat + "," + InsertStringLon + "," + dist2Prev + "," + dcumDist;
+					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
+					dh.insert(InsertStringInsertype, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);
 
-					InsertString = InsertStringInsertype + ",'"
-							+ InsertStringLat + "','" + InsertStringLon + "','"
-							+ dist2Prev + "','" + cumDist;
-
-					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
-							.show();
-					dh.insert(InsertStringInsertype, InsertStringLat,
-							InsertStringLon, dist2Prev, cumDist);
+					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 				} else {
 					Toast.makeText(
 							Main.this,
@@ -185,9 +189,6 @@ public class Main extends Activity {
 				float[] results = { 999f };
 
 				String locationprovider = mLocationManager.getBestProvider(criteria, true);
-/*  COMMENTED OUT BY LIAM to remove extraneous autoupdates
-				mLocationManager.requestLocationUpdates(
-						LocationManager.GPS_PROVIDER, 60000, 10, mLocationListener); */
 				Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
 
 				if (mLocation != null) {
@@ -195,18 +196,11 @@ public class Main extends Activity {
 					Double InsertStringLat = mLocation.getLatitude();
 					Double InsertStringLon = mLocation.getLongitude();
 
-					// get last location in database
-					// double[] dLastLocation = getLastLocation();
-
 					Double dist2Prev = 0.0;
 					Double cumDist = 0.0;
 
 					// is the db empty?
 					if (dLastLocation != null) {
-						// break out lat and long
-						// double dStartLat = dLastLocation[0];
-						// double dStartLong = dLastLocation[1];
-
 						// double dDist2Prev = dLastLocation[2];
 						double dCumDist = dLastLocation[3];
 
@@ -220,12 +214,9 @@ public class Main extends Activity {
 								dStartLong, InsertStringLat, InsertStringLon,
 								results);
 
-						// float fDistanceBeween= results[0];
-
 						double dDist2Prev = results[0];
 
 						dist2Prev = dDist2Prev;
-
 						cumDist += dDist2Prev;
 						mLocationManager.removeUpdates(mLocationListener);  // moved later in routine to allow for removal of requestLocationupdates
 					}
@@ -297,55 +288,29 @@ public class Main extends Activity {
 
 				// make sure there is an active trip b4 logging to db
 
-				if (isTripActive()) {
+				//if (isTripActive()) {
 
 					String InsertStringInsertype = "Auto";
 					Double InsertStringLat = mlocation.getLatitude();
 					Double InsertStringLon = mlocation.getLongitude();
 
-					// get last location in database
-					double[] dLastLocation = getLastLocation();
-
-					Double dist2Prev = 0.0;
-					Double dcumDist = 0.0;
-
-					// is the db empty?
-					if (dLastLocation != null) {
-						// break out lat and long
-						double dStartLat = dLastLocation[0];
-						double dStartLong = dLastLocation[1];
-
-						// double dDist2Prev = dLastLocation[3];
-						double dCumDist = dLastLocation[3];
-
-						float[] results = { 999f };
-						// get distance between here and last record in database
-						android.location.Location.distanceBetween(dStartLat,
-								dStartLong, InsertStringLat, InsertStringLon,
-								results);
-
-						// float fDistanceBeween= results[0];
-
-						double dDist2Prev = results[0];
-
-						dist2Prev = dDist2Prev;
-
-						dcumDist += dDist2Prev;
-
-					}  // end if (dLastLocation != null) 
-
+					double[] calcedDist = CalculateDistance(InsertStringLat, InsertStringLon);
+					
 					// String InsertString = InsertStringInsertype + ",'" +
 					// InsertStringLat + "','" + InsertStringLon + "','" +
 					// dist2Prev + "'," + cumDist;
-
+					double dist2Prev = calcedDist[0];
+					double dcumDist = calcedDist[1];
+					
 					String InsertString = InsertStringInsertype + ","
 							+ InsertStringLat + "," + InsertStringLon + ","
 							+ dist2Prev + "," + dcumDist;
 					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-					dh.insert(InsertString, InsertStringLat, InsertStringLon,
+					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
+					dh.insert(InsertStringInsertype, InsertStringLat, InsertStringLon,
 							dist2Prev, dcumDist);
 
-				}// end isTripActive()
+				//}// end isTripActive()
 
 			}
 
@@ -378,6 +343,45 @@ public class Main extends Activity {
 
 	}
 
+	
+	// helper method to calculate distances
+	private double[] CalculateDistance(double InsertStringLat, double InsertStringLon) {
+		// get last location in database
+		double[] dLastLocation = getLastLocation();
+
+		Double dist2Prev = 0.0;
+		Double dcumDist = 0.0;
+
+		// is the db empty?
+		if (dLastLocation != null) {
+			// break out lat and long
+			double dStartLat = dLastLocation[0];
+			double dStartLong = dLastLocation[1];
+
+			// double dDist2Prev = dLastLocation[3];
+			dcumDist = dLastLocation[3];
+
+			float[] results = { 999f };
+			// get distance between here and last record in database
+			android.location.Location.distanceBetween(dStartLat,
+					dStartLong, InsertStringLat, InsertStringLon,
+					results);
+
+			// float fDistanceBeween= results[0];
+
+			double dDist2Prev = results[0];
+
+			dist2Prev = dDist2Prev;
+			dcumDist += dDist2Prev;
+			
+		}  // end if (dLastLocation != null) 
+
+		double[] dReturn = { dist2Prev, dcumDist };
+		return dReturn;
+
+	}
+	
+	
 	// helper method to get last location in db for breadcrumbs
 	private double[] getLastLocation() {
 		String sStartLat = "";
