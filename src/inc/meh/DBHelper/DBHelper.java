@@ -95,7 +95,10 @@ public class DBHelper {
 			
 			@Override      
 			public void onCreate(SQLiteDatabase db) {         
-				db.execSQL("CREATE TABLE " + TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, dist2Prev real, cumDist real, created_date date default CURRENT_DATE)");      
+				db.execSQL("CREATE TABLE " + "coordinates (coordinateid INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, dist2Prev real, cumDist real, created_date date default CURRENT_DATE)");      
+				db.execSQL("CREATE TABLE " + "trip (tripid INTEGER PRIMARY KEY AUTOINCREMENT, catid integer, name text, description text, distance real, duration text, vehicleid integer, starttime text, stoptime text)");
+				db.execSQL("CREATE TABLE " + "category (catid INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text, isdeductible boolean)");
+				db.execSQL("CREATE TABLE " + "route (routeid INTEGER PRIMARY KEY AUTOINCREMENT, tripid integer)");
 				}         
 			
 			@Override     
