@@ -17,6 +17,8 @@ android:text="@string/hello" />
 <Button android:layout_width="wrap_content" android:id="@+id/button2" android:text="@string/Retrieve" android:layout_height="wrap_content"></Button> 
 <Button android:layout_width="wrap_content" android:id="@+id/button4" android:text="@string/Retrieve1" android:layout_height="wrap_content"></Button>
 <Button android:layout_width="wrap_content" android:id="@+id/button3" android:text="@string/Delete" android:layout_height="wrap_content"></Button>
+<!-- <Button android:layout_width="wrap_content" android:id="@+id/button5" android:text="@string/GPSStatus" android:layout_height="wrap_content"></Button>   -->
+
 
 <TextView android:id="@+id/out_text"
 android:layout_width="fill_parent"

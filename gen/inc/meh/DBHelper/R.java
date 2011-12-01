@@ -28,6 +28,7 @@ public final class R {
     }
     public static final class string {
         public static final int Delete=0x7f040006;
+        public static final int GPSStatus=0x7f040008;
         public static final int Insert=0x7f040002;
         public static final int ManualInsert=0x7f040007;
         public static final int Retrieve=0x7f040003;
