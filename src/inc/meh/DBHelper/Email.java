@@ -43,8 +43,7 @@ public class Email extends Activity {
                        
                         @Override
                         public void onClick(View v) {
-                                
-                        	
+
                         	//String columnString =   "\"PersonName\",\"Gender\",\"Street1\",\"postOffice\",\"Age\"";
                         	//String dataString   =   "currentUser,userName,gender,currentUser.street1,currentUser.postOFfice,currentUser.age";
                         	
