@@ -26,7 +26,8 @@ public class Main extends Activity {
 	Button buttonRetrieve;
 	Button buttonRetrieve1;
 	Button buttonExport;
-
+	final Criteria criteria = new Criteria();
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class Main extends Activity {
 			startActivity(myIntent);
 		}
 
-		final Criteria criteria = new Criteria();
+
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		// criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 		criteria.setPowerRequirement(Criteria.POWER_LOW);
@@ -82,25 +83,20 @@ public class Main extends Activity {
 				// 1, mLocationListener);
 
 				if (mLocation != null) {
-					buttonStart.setClickable(false);
-					buttonStop.setClickable(true);
-					String InsertStringInsertype = "Start";
-					Double InsertStringLat = mLocation.getLatitude();
-					Double InsertStringLon = mLocation.getLongitude();
-
-					String InsertString = InsertStringInsertype + ",'"
-							+ InsertStringLat + "','" + InsertStringLon + "','";
-
-					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
-							.show();
-					dh.insert(InsertStringInsertype, InsertStringLat,
-							InsertStringLon, 0.0, 0.0);
-
-					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
-							.show();
-				} else {
-					Toast.makeText(Main.this, "turn on your GPS lame-o",
-							Toast.LENGTH_SHORT).show();
+					
+					// buttonStart.setClickable(false);
+					if (buttonStart.getText() == getResources().getString(R.string.Insert)) {
+						StartTrack(mLocation);
+						}
+					else {
+						StopTrack();
+					}
+					
+					
+					} // if (mLocatoin != null) 
+					else {
+						Toast.makeText(Main.this, "turn on your GPS lame-o",
+								Toast.LENGTH_SHORT).show();
 				}
 			}
 
@@ -179,8 +175,8 @@ public class Main extends Activity {
 		});
 		
 		// Stop location updates
-		buttonStop = (Button) findViewById(R.id.buttonStop1);
-		buttonStop.setOnClickListener(new View.OnClickListener() {
+		// buttonStop = (Button) findViewById(R.id.buttonStop1);
+/*		buttonStop.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				buttonStop.setClickable(false);
@@ -271,8 +267,8 @@ public class Main extends Activity {
 			}
 		});
 		// Close of buttonStop.setOnClickListener
-		buttonStop.setClickable(false);
-
+	//	buttonStop.setClickable(false);
+*/
 		// Retrieve button activity
 		buttonRetrieve = (Button) findViewById(R.id.button2);
 		buttonRetrieve.setOnClickListener(new View.OnClickListener() {
@@ -348,6 +344,28 @@ public class Main extends Activity {
 	}
 
 	// Close onCreate
+
+	@Override
+	public void onSaveInstanceState(Bundle outState)
+	{
+		//save button state
+		outState.putString("ButtonState", buttonStart.getText().toString());
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState)
+	{
+		super.onRestoreInstanceState(savedInstanceState);
+		//---retrieve the information persisted earlier---
+		String sButtonState = savedInstanceState.getString("ButtonState");
+		
+		if (sButtonState == getResources().getString(R.string.Stop)) 
+		{
+			buttonStart.setText(sButtonState);
+		}
+	}
+	
 	// helper method to get last location in db for breadcrumbs
 	private boolean isTripActive() {
 		if (buttonStart.isClickable() == false && buttonStop.isClickable()) {
@@ -429,8 +447,119 @@ public class Main extends Activity {
 		double dCumDist = Double.parseDouble(sCumDist);
 
 		double[] dReturn = { dStartLat, dStartLong, dDist2Prev, dCumDist };
-
+		
 		return dReturn;
 
+	}
+	
+	private void StartTrack(Location mLocation) {
+		buttonStart.setText(getResources().getString(R.string.Stop));
+		String InsertStringInsertype = "Start";
+		Double InsertStringLat = mLocation.getLatitude();
+		Double InsertStringLon = mLocation.getLongitude();
+
+		String InsertString = InsertStringInsertype + ",'"
+				+ InsertStringLat + "','" + InsertStringLon + "','";
+
+		Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
+				.show();
+		dh.insert(InsertStringInsertype, InsertStringLat,
+				InsertStringLon, 0.0, 0.0);
+
+		Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
+				.show();
+	}
+	private void StopTrack() {
+		if (buttonStart.getText() == getResources().getString(R.string.Stop)) {
+			buttonStart.setText(getResources().getString(R.string.Insert));
+			String InsertStringInsertype = "Stop";
+			
+			
+				String sStartLat = "";
+				String sStartLong = "";
+
+				String sStopLat = "";
+				String sStopLong = "";
+				//mLocationManager.removeUpdates(mLocationListener);  // try moving this further down in code
+
+				// calculate distance
+				tv.setText("calc this");
+				// get last location in database
+				double[] dLastLocation = getLastLocation();
+
+				// break out lat and long
+				double dStartLat = dLastLocation[0];
+				double dStartLong = dLastLocation[1];
+				float[] results = { 999f };
+
+				String locationprovider = mLocationManager.getBestProvider(criteria, true);
+				Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
+
+				if (mLocation != null) {
+					InsertStringInsertype = "Stop";
+					Double InsertStringLat = mLocation.getLatitude();
+					Double InsertStringLon = mLocation.getLongitude();
+
+					Double dist2Prev = 0.0;
+					Double cumDist = 0.0;
+
+					// is the db empty?
+					if (dLastLocation != null) {
+						// double dDist2Prev = dLastLocation[2];
+						double dCumDist = dLastLocation[3];
+
+						if (dCumDist != 0) {
+							cumDist = dCumDist;
+						}
+						
+						// float[] results = {999f};
+						// get distance between here and last record in database
+						android.location.Location.distanceBetween(dStartLat,
+								dStartLong, InsertStringLat, InsertStringLon,
+								results);
+
+						double dDist2Prev = results[0];
+
+						dist2Prev = dDist2Prev;
+						cumDist += dDist2Prev;
+						mLocationManager.removeUpdates(mLocationListener);  // moved later in routine to allow for removal of requestLocationupdates
+					}
+					// show me the money!!!
+					android.location.Location.distanceBetween(dStartLat,
+							dStartLong, InsertStringLat, InsertStringLon,
+							results);
+
+					tv.setText("distanceBetween: " + results[0]);
+
+					sStopLat = InsertStringLat.toString();
+					sStopLong = InsertStringLon.toString();
+
+					sStartLat = Double.toString(dStartLat);
+					sStartLong = Double.toString(dStartLong);
+
+					tv.setText("start Lat: " + sStartLat + " start Long: "
+							+ sStartLong + "stop Lat: " + sStopLat
+							+ "stop Long: " + sStopLong);
+					tv.setText("distanceBetween: " + results[0]
+							+ "\n\nstart Lat: " + sStartLat + " start Long: "
+							+ sStartLong + "\nstop Lat: " + sStopLat
+							+ "stop Long: " + sStopLong);
+
+					String InsertString = InsertStringInsertype + ",'"
+							+ InsertStringLat + "','" + InsertStringLon + "','";
+
+					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
+							.show();
+					dh.insert(InsertStringInsertype, InsertStringLat,
+							InsertStringLon, dist2Prev, cumDist);
+
+				} else {
+					Toast.makeText(Main.this, "turn on your GPS lame-o",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+		
+		// Close of buttonStop.setOnClickListener
+	//	buttonStop.setClickable(false);
 	}
 }
