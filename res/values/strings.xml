@@ -3,7 +3,7 @@
     <string name="hello">Track my mileage!!!</string>
     <string name="app_name">MileageTracker</string>
     <string name="Insert">Start tracking</string>
-    <string name="Retrieve">Retrieve Coordinate Entry</string>
+    <string name="Retrieve">Retrieve All Coordinate Entries</string>
     <string name="Retrieve1">Retrieve 1 coordinate entry</string>
     <string name="Stop">Stop tracking</string>
     <string name="Delete">Truncate all rows</string>
