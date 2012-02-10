@@ -153,7 +153,7 @@ public class Main extends Activity {
 		buttonRetrieve1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				List<String> OneRow = dh.selectOneRow("");
+				List<String> OneRow = dh.selectOneRow("auto");
 				if (OneRow.isEmpty()) {
 					tv.setText("there are no coordinate entries");
 				}
@@ -344,9 +344,7 @@ public class Main extends Activity {
 //		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 	//			0, 0, mLocationListener);
 
-	}
-
-	// Close onCreate
+	}   // Close onCreate
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
