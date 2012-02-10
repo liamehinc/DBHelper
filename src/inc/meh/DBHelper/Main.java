@@ -396,7 +396,8 @@ public class Main extends Activity {
 	// helper method to calculate distances
 	private double[] CalculateDistance(double InsertStringLat, double InsertStringLon) {
 		// get last location in database
-		double[] dLastLocation = {23,45,34,56,67,78};//getLastLocation();
+		//double[] dLastLocation = {23,45,34,56,67,78};//getLastLocation();
+		double[] dLastLocation = getLastLocation();
 
 		Double dist2Prev = 0.0;
 		Double dcumDist = 0.0;
