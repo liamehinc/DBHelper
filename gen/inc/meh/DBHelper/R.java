@@ -28,9 +28,10 @@ public final class R {
         public static final int emailsendbutton=0x7f060006;
         public static final int emailsubject=0x7f060004;
         public static final int emailtext=0x7f060005;
+        public static final int exit=0x7f060012;
         public static final int export_data=0x7f06000f;
         public static final int out_text=0x7f06000d;
-        public static final int retrieve_entries=0x7f060011;
+        public static final int show_all_data=0x7f060011;
         public static final int truncate_data=0x7f060010;
     }
     public static final class layout {

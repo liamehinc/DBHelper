@@ -94,6 +94,22 @@ public class DBHelper {
 		return list;  
 		}     
 	
+	public List<String> exportAll(String sortstring) {      
+		List<String> list = new ArrayList<String>();
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "created_date","cumDist",sortstring},null, null, null, null, sortstring);
+		if (cursor.moveToFirst()) {
+			do {
+				list.add(cursor.getString(0));
+				list.add(Double.toString(cursor.getDouble(1)));
+				}
+			while (cursor.moveToNext());
+			}
+		if (cursor != null && !cursor.isClosed()) {
+			cursor.close();    
+			}   
+		return list;  
+		}     
+	
 	
 		private static class OpenHelper extends SQLiteOpenHelper {  
 			OpenHelper(Context context) {         

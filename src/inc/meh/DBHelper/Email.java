@@ -104,10 +104,7 @@ public class Email extends Activity {
                         	sendIntent.setType("text/html");
 
                         	//startActivity(sendIntent);
-                        	
-                        	
-                        	
-                                 
+
                                       final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
                                
                               //        emailIntent.setType("plain/text");

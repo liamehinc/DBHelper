@@ -1,12 +1,18 @@
 package inc.meh.DBHelper;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 //import android.database.Cursor;
 import android.location.*;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -153,7 +159,7 @@ public class Main extends Activity {
 		buttonRetrieve1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				List<String> OneRow = dh.selectOneRow("auto");
+				List<String> OneRow = dh.selectOneRow("");
 				if (OneRow.isEmpty()) {
 					tv.setText("there are no coordinate entries");
 				}
@@ -176,6 +182,8 @@ public class Main extends Activity {
 
 			}
 		});
+		
+
 		
 		// Stop location updates
 		// buttonStop = (Button) findViewById(R.id.buttonStop1);
@@ -355,8 +363,33 @@ public class Main extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Toast.makeText(this, "Just a test", Toast.LENGTH_SHORT).show();
-		return true;
+		
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.export_data:
+	        	ExportData();
+	        	Toast.makeText(this, "Exporting data...", Toast.LENGTH_SHORT).show();
+	        	return true;
+	        
+	        case R.id.truncate_data:
+	        	TruncateData();
+	        	Toast.makeText(this, "Erasing ALL data...", Toast.LENGTH_SHORT).show();
+	        	
+	        	return true;
+	        
+	        case R.id.show_all_data:
+	        	ShowAllData();
+	            return true;
+	        
+	        case R.id.exit:
+	        	finish();
+	            return true;
+	            
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+
+		//return true;
 	}
 	
 	@Override
@@ -390,6 +423,117 @@ public class Main extends Activity {
 
 	}
 
+	
+	private void ExportData()
+	{
+		
+		//String columnString =   "\"PersonName\",\"Gender\",\"Street1\",\"postOffice\",\"Age\"";
+    	//String dataString   =   "currentUser,userName,gender,currentUser.street1,currentUser.postOFfice,currentUser.age";
+    	
+    	//String columnString ="Insertype, Latitude, Longitude, Distance To Previous, Cumulative Distance, Date Created";  
+		
+		String columnString ="Date Created, Distance Travelled";
+    	
+    	String combinedString = columnString + "\n"; //+ dataString;
+
+    	List<String> names = dh.exportAll("coordinateid");
+		StringBuilder sb = new StringBuilder();
+		
+		int i = 0;
+		
+		for (String name : names) {
+			 
+			sb.append(name + ", ");
+			i++;
+			if (i==2) {
+				sb.append("\n");
+				i=0;
+			}
+		}
+
+		combinedString += sb.toString();
+		//Log.d("EXAMPLE", "names size - " + names.size());
+		
+    	File file   = null;
+    	File root   = Environment.getExternalStorageDirectory();
+    	if (root.canWrite()){
+    	    File dir    =   new File (root.getAbsolutePath() + "/PersonData");
+    	     dir.mkdirs();
+    	     file   =   new File(dir, "Data.csv");
+    	     FileOutputStream out   =   null;
+    	    try {
+    	        out = new FileOutputStream(file);
+    	        } catch (FileNotFoundException e) {
+    	            e.printStackTrace();
+    	        }
+    	        try {
+    	            out.write(combinedString.getBytes());
+    	        } catch (IOException e) {
+    	            e.printStackTrace();
+    	        }
+    	        try {
+    	            out.close();
+    	        } catch (IOException e) {
+    	            e.printStackTrace();
+    	        }
+    	    }
+
+    	Uri u1  =   null;
+    	
+    	u1  =   Uri.fromFile(file);
+
+    	Intent sendIntent = new Intent(Intent.ACTION_SEND);
+    	sendIntent.putExtra(Intent.EXTRA_SUBJECT, "MileageTracker Export");
+    	sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
+    	sendIntent.setType("text/html");
+
+    	//startActivity(sendIntent);
+/*
+                  final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+           
+          //        emailIntent.setType("plain/text");
+             
+                  emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, "");
+           
+                  emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "MileageTracker Export");
+           
+                  //emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, emailtext.getText());
+                  
+                  //emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, emailtext.getText());
+   
+        //        Email.this.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+        
+        */
+                  this.startActivity(Intent.createChooser(sendIntent, "Send mail..."));
+
+
+	}
+	
+	private void ShowAllData()
+	{
+		tv = (TextView) findViewById(R.id.TextView1);
+
+		List<String> names = dh.selectAll("coordinateid");
+		StringBuilder sb = new StringBuilder();
+		sb.append("Coordinates in database:\n");
+		for (String name : names) {
+			sb.append(name + ", ");
+			// sb.append("\n");
+		}
+
+		Log.d("EXAMPLE", "names size - " + names.size());
+		tv.setText(sb.toString());
+	}
+	
+	private void TruncateData()
+	{
+		tv = (TextView) findViewById(R.id.TextView1);
+
+		dh.deleteAll();
+	}
+	
+	
+	
 	
 	// helper method to calculate distances
 	private double[] CalculateDistance(double InsertStringLat, double InsertStringLon) {
@@ -484,6 +628,9 @@ public class Main extends Activity {
 		Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
 				.show();
 	}
+	
+	
+	
 	private void StopTrack() {
 		if (buttonStart.getText() == getResources().getString(R.string.Stop)) {
 			buttonStart.setText(getResources().getString(R.string.Insert));
