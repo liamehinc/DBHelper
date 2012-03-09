@@ -37,6 +37,8 @@ public class Main extends Activity {
 	Button buttonRetrieve1;
 	Button buttonExport;
 	private boolean debug=false;
+	private boolean isTracking=false;
+
 	final Criteria criteria = new Criteria();
 	
 	/** Called when the activity is first created. */
@@ -82,6 +84,7 @@ public class Main extends Activity {
 		buttonStart.setBackgroundColor(Color.GREEN);
 		buttonStart.setWidth(560);
 		buttonStart.setHeight(90);
+		
 		buttonStart.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 
@@ -95,6 +98,7 @@ public class Main extends Activity {
 						LocationManager.GPS_PROVIDER, 60000, 10, mLocationListener);
 				Location mLocation = mLocationManager
 						.getLastKnownLocation(locationprovider);
+
 				// Register the listener with the Location Manager to receive
 				// location updates
 				// mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50,
@@ -103,13 +107,17 @@ public class Main extends Activity {
 				if (mLocation != null) {
 					
 					// buttonStart.setClickable(false);
-					if (buttonStart.getText() == getResources().getString(R.string.Insert)) {
+					
+					//if (buttonStart.getText() == getResources().getString(R.string.Insert)) {
+					if (!isTracking) {
 						StartTrack(mLocation);
 						buttonStart.setBackgroundColor(Color.RED);
+						isTracking=true;
 						}
 					else {
 						StopTrack();
 						buttonStart.setBackgroundColor(Color.GREEN);
+						isTracking=false;
 					}
 					
 					
@@ -424,6 +432,8 @@ public class Main extends Activity {
 	{
 		//save button state
 		outState.putString("ButtonState", buttonStart.getText().toString());
+		outState.putBoolean("isTracking", isTracking);
+		
 		super.onSaveInstanceState(outState);
 	}
 
@@ -434,9 +444,14 @@ public class Main extends Activity {
 		//---retrieve the information persisted earlier---
 		String sButtonState = savedInstanceState.getString("ButtonState");
 		
-		if (sButtonState == getResources().getString(R.string.Stop)) 
+		isTracking = savedInstanceState.getBoolean("isTracking");
+		
+		//if (sButtonState == getResources().getString(R.string.Stop))
+		if (isTracking)
 		{
-			buttonStart.setText(sButtonState);
+			//buttonStart.setText(sButtonState);
+			buttonStart.setText(getResources().getString(R.string.Stop));
+			buttonStart.setBackgroundColor(Color.RED);
 		}
 	}
 	
