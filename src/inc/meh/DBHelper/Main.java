@@ -8,6 +8,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 //import android.database.Cursor;
 import android.location.*;
 import android.net.Uri;
@@ -35,6 +36,7 @@ public class Main extends Activity {
 	Button buttonRetrieve;
 	Button buttonRetrieve1;
 	Button buttonExport;
+	private boolean debug=false;
 	final Criteria criteria = new Criteria();
 	
 	/** Called when the activity is first created. */
@@ -61,6 +63,10 @@ public class Main extends Activity {
 
 		// Delete all rows
 		buttonDelete = (Button) findViewById(R.id.button3);
+		
+		if (!debug)
+			buttonDelete.setVisibility(Button.GONE);
+		
 		buttonDelete.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -73,6 +79,9 @@ public class Main extends Activity {
 
 		// Start Button activity
 		buttonStart = (Button) findViewById(R.id.button1);
+		buttonStart.setBackgroundColor(Color.GREEN);
+		buttonStart.setWidth(560);
+		buttonStart.setHeight(90);
 		buttonStart.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 
@@ -96,9 +105,11 @@ public class Main extends Activity {
 					// buttonStart.setClickable(false);
 					if (buttonStart.getText() == getResources().getString(R.string.Insert)) {
 						StartTrack(mLocation);
+						buttonStart.setBackgroundColor(Color.RED);
 						}
 					else {
 						StopTrack();
+						buttonStart.setBackgroundColor(Color.GREEN);
 					}
 					
 					
@@ -114,6 +125,10 @@ public class Main extends Activity {
 
 		// Manual Insert
 		buttonManualInsert = (Button) findViewById(R.id.buttonManualInsert);
+
+		if (!debug)
+			buttonManualInsert.setVisibility(Button.GONE);
+		
 		buttonManualInsert.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -156,6 +171,10 @@ public class Main extends Activity {
 
 		// Retrieve1 button
 		buttonRetrieve1 = (Button) findViewById(R.id.button4);
+		
+		if (!debug)
+			buttonRetrieve1.setVisibility(Button.GONE);
+		
 		buttonRetrieve1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -171,6 +190,10 @@ public class Main extends Activity {
 
 		// Export button
 		buttonExport = (Button) findViewById(R.id.btnExport);
+		
+		if (!debug)
+			buttonExport.setVisibility(Button.GONE);
+		
 		buttonExport.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -282,6 +305,10 @@ public class Main extends Activity {
 */
 		// Retrieve button activity
 		buttonRetrieve = (Button) findViewById(R.id.button2);
+		
+		if (!debug)
+			buttonRetrieve.setVisibility(Button.GONE);
+		
 		buttonRetrieve.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// Perform action on click

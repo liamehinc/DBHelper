@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Track my mileage!!!</string>
+    <string name="hello">Welcome to MileageTracker!!!</string>
     <string name="app_name">MileageTracker</string>
     <string name="Insert">Start tracking</string>
     <string name="Retrieve">Retrieve All Coordinate Entries</string>
