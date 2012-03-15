@@ -457,7 +457,7 @@ public class Main extends Activity {
 	
 	// helper method to get last location in db for breadcrumbs
 	private boolean isTripActive() {
-		if (buttonStart.isClickable() == false && buttonStop.isClickable()) {
+		if (isTracking) {
 			return true;
 		} else {
 			return false;
@@ -729,11 +729,7 @@ public class Main extends Activity {
 						mLocationManager.removeUpdates(mLocationListener);  // moved later in routine to allow for removal of requestLocationupdates
 					}
 					// show me the money!!!
-					android.location.Location.distanceBetween(dStartLat,
-							dStartLong, InsertStringLat, InsertStringLon,
-							results);
-
-					tv.setText("distanceBetween: " + results[0]);
+					android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
 
 					sStopLat = InsertStringLat.toString();
 					sStopLong = InsertStringLon.toString();
@@ -741,10 +737,7 @@ public class Main extends Activity {
 					sStartLat = Double.toString(dStartLat);
 					sStartLong = Double.toString(dStartLong);
 
-					tv.setText("start Lat: " + sStartLat + " start Long: "
-							+ sStartLong + "stop Lat: " + sStopLat
-							+ "stop Long: " + sStopLong);
-					tv.setText("distanceBetween: " + results[0]
+					tv.setText("Cumulative Distance: " + cumDist + " distanceBetween: " + results[0]
 							+ "\n\nstart Lat: " + sStartLat + " start Long: "
 							+ sStartLong + "\nstop Lat: " + sStopLat
 							+ "stop Long: " + sStopLong);
