@@ -11,8 +11,8 @@ android:layout_height="fill_parent">
 <TextView android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:text="@string/hello" />
-<Button android:layout_width="wrap_content" android:id="@+id/button1" android:text="@string/Insert" android:layout_height="wrap_content"></Button>
-
+ <Button android:layout_width="wrap_content" android:id="@+id/button1" android:text="@string/Insert" android:layout_height="wrap_content"></Button>
+ 
     <Button 
   android:id="@+id/btnStart"
   android:layout_width="fill_parent"  
@@ -20,6 +20,9 @@ android:text="@string/hello" />
   android:layout_margin="3dp"
   android:gravity="center"
 
+  android:background="@drawable/nice_button"
+
+  android:text="@string/labelStart"
   android:textColor="@android:color/white"
   android:textSize="18sp"
   android:shadowRadius="1"
