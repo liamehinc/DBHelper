@@ -36,7 +36,7 @@ public class DBHelper {
 
 		//insert date as GMT time (to avoid conflicts when changing time-zones
 		Date today = new Date();
-		this.insertStmt.bindString(6, today.toGMTString());
+		this.insertStmt.bindString(7, today.toGMTString());
 
 		return this.insertStmt.executeInsert();    
 		}      
@@ -60,11 +60,11 @@ public class DBHelper {
 */	
 	public List<String> getTripInfo(String groupstring){
 		List<String> lTripInfo = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "max (created_date)","max(cumDist)",groupstring},null, null, groupstring, null, groupstring);
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { groupstring, "max(created_date)", "max(cumDist)"},null, null, null, null, null);
 		
 		if (cursor.moveToFirst()) {
-				lTripInfo.add(cursor.getString(0));
-				lTripInfo.add(Double.toString(cursor.getDouble(1)));
+				lTripInfo.add(Double.toString(cursor.getDouble(0)));
+				lTripInfo.add(cursor.getString(1));
 				lTripInfo.add(Double.toString(cursor.getDouble(2)));
 				}
 		if (cursor != null && !cursor.isClosed()) {
@@ -78,7 +78,7 @@ public class DBHelper {
 		
 		if (list.isEmpty()) {
 			// this will be the first trip
-			return 0;
+			return 1;
 		}
 		else {
 			// this will be a subsequent trip of id 1 greater then the previous id

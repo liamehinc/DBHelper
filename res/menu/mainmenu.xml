@@ -4,5 +4,4 @@
     <item android:id="@+id/truncate_data" android:title="Erase All My Data" android:visible="true" android:enabled="true"></item>
     <item android:id="@+id/show_all_data" android:title="Show All My Data" android:visible="true" android:enabled="true"></item>
     <item android:id="@+id/exit" android:title="Exit" android:visible="true" android:enabled="true"></item>
-        
 </menu>

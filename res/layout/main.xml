@@ -8,9 +8,13 @@ android:layout_height="wrap_content">
 android:orientation="vertical" 
 android:layout_width="fill_parent"
 android:layout_height="fill_parent"> 
+
 <TextView android:layout_width="fill_parent"
 android:layout_height="wrap_content"
-android:text="@string/hello" />
+android:text="@string/hello"
+android:paddingTop="10dp"
+android:paddingBottom="10dp" />
+
 <!--   <Button android:layout_width="wrap_content" android:id="@+id/button1" android:text="@string/Insert" android:layout_height="wrap_content"></Button>
  -->
 
@@ -30,6 +34,7 @@ android:text="@string/hello" />
   android:shadowDx="1"
   android:shadowDy="1"
   android:shadowColor="@android:color/black"
+  
 ></Button>
     
 <Button android:layout_width="wrap_content" android:id="@+id/buttonManualInsert" android:text="@string/ManualInsert" android:layout_height="wrap_content"></Button>
@@ -44,7 +49,7 @@ android:text="@string/hello" />
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:text="" /> 
-<TextView android:text="@string/hello" android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/TextView1"></TextView>
+<TextView android:text="" android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/TextView1"></TextView>
 </LinearLayout> 
 </ScrollView>
 

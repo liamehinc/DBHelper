@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import android.app.Activity;
 import android.content.Context;
@@ -475,11 +477,13 @@ public class Main extends Activity {
     	
     	//String columnString ="Insertype, Latitude, Longitude, Distance To Previous, Cumulative Distance, Date Created";  
 		
-		String columnString ="Date Created, Distance Travelled";
+		String columnString ="Trip Number, Date Created, Distance Travelled ";
     	
     	String combinedString = columnString + "\n"; //+ dataString;
 
-    	List<String> names = dh.exportAll("coordinateid");
+    	List<String> names = dh.getTripInfo("tripid");
+    	
+    	
 		StringBuilder sb = new StringBuilder();
 		
 		int i = 0;
@@ -488,7 +492,7 @@ public class Main extends Activity {
 			 
 			sb.append(name + ", ");
 			i++;
-			if (i==2) {
+			if (i==3) {
 				sb.append("\n");
 				i=0;
 			}
@@ -502,7 +506,7 @@ public class Main extends Activity {
     	if (root.canWrite()){
     	    File dir    =   new File (root.getAbsolutePath() + "/PersonData");
     	     dir.mkdirs();
-    	     file   =   new File(dir, "Data.csv");
+    	     file   =   new File(dir, "mileage.csv");
     	     FileOutputStream out   =   null;
     	    try {
     	        out = new FileOutputStream(file);
@@ -527,6 +531,13 @@ public class Main extends Activity {
 
     	Intent sendIntent = new Intent(Intent.ACTION_SEND);
     	sendIntent.putExtra(Intent.EXTRA_SUBJECT, "MileageTracker Export");
+    	
+    	Calendar currentDate = Calendar.getInstance();
+    	  SimpleDateFormat formatter= 
+    	  new SimpleDateFormat("EEE, MMM d yyyy HH:mm:ss");
+    	  String dateNow = formatter.format(currentDate.getTime());
+
+    	sendIntent.putExtra(Intent.EXTRA_TEXT, "Mileage Exported on: " + dateNow);
     	sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
     	sendIntent.setType("text/html");
 
