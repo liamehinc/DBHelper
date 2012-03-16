@@ -17,22 +17,23 @@ public final class R {
         public static final int LinearLayout01=0x7f060000;
         public static final int LinearLayout02=0x7f060001;
         public static final int LinearLayout03=0x7f060003;
-        public static final int TextView1=0x7f06000e;
-        public static final int btnExport=0x7f06000c;
+        public static final int TextView1=0x7f06000f;
+        public static final int btnExport=0x7f06000d;
+        public static final int btnStart=0x7f060008;
         public static final int button1=0x7f060007;
-        public static final int button2=0x7f060009;
-        public static final int button3=0x7f06000b;
-        public static final int button4=0x7f06000a;
-        public static final int buttonManualInsert=0x7f060008;
+        public static final int button2=0x7f06000a;
+        public static final int button3=0x7f06000c;
+        public static final int button4=0x7f06000b;
+        public static final int buttonManualInsert=0x7f060009;
         public static final int emailaddress=0x7f060002;
         public static final int emailsendbutton=0x7f060006;
         public static final int emailsubject=0x7f060004;
         public static final int emailtext=0x7f060005;
-        public static final int exit=0x7f060012;
-        public static final int export_data=0x7f06000f;
-        public static final int out_text=0x7f06000d;
-        public static final int show_all_data=0x7f060011;
-        public static final int truncate_data=0x7f060010;
+        public static final int exit=0x7f060013;
+        public static final int export_data=0x7f060010;
+        public static final int out_text=0x7f06000e;
+        public static final int show_all_data=0x7f060012;
+        public static final int truncate_data=0x7f060011;
     }
     public static final class layout {
         public static final int email=0x7f030000;
@@ -47,9 +48,12 @@ public final class R {
         public static final int GPSStatus=0x7f040008;
         public static final int Insert=0x7f040002;
         public static final int ManualInsert=0x7f040007;
+        public static final int Meters=0x7f04000c;
+        public static final int Miles=0x7f04000b;
         public static final int Retrieve=0x7f040003;
         public static final int Retrieve1=0x7f040004;
         public static final int Stop=0x7f040005;
+        public static final int Units=0x7f04000a;
         public static final int app_name=0x7f040001;
         public static final int hello=0x7f040000;
     }

@@ -38,6 +38,7 @@ public class Main extends Activity {
 	Button buttonExport;
 	private boolean debug=false;
 	private boolean isTracking=false;
+	int InsertStringTripId;
 
 	final Criteria criteria = new Criteria();
 	
@@ -162,7 +163,7 @@ public class Main extends Activity {
 					InsertString = InsertStringInsertype + "," + InsertStringLat + "," + InsertStringLon + "," + dist2Prev + "," + dcumDist;
 					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
-					dh.insert(InsertStringInsertype, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);
+					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);
 
 					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 				} else {
@@ -364,7 +365,7 @@ public class Main extends Activity {
 							+ dist2Prev + "," + dcumDist;
 					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
-					dh.insert(InsertStringInsertype, InsertStringLat, InsertStringLon,
+					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,
 							dist2Prev, dcumDist);
 
 				//}// end isTripActive()
@@ -655,6 +656,7 @@ public class Main extends Activity {
 	
 	private void StartTrack(Location mLocation) {
 		buttonStart.setText(getResources().getString(R.string.Stop));
+		InsertStringTripId = dh.getTripId();
 		String InsertStringInsertype = "Start";
 		Double InsertStringLat = mLocation.getLatitude();
 		Double InsertStringLon = mLocation.getLongitude();
@@ -664,7 +666,7 @@ public class Main extends Activity {
 
 		Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
 				.show();
-		dh.insert(InsertStringInsertype, InsertStringLat,
+		dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
 				InsertStringLon, 0.0, 0.0);
 
 		Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
@@ -674,7 +676,7 @@ public class Main extends Activity {
 	
 	
 	private void StopTrack() {
-		if (buttonStart.getText() == getResources().getString(R.string.Stop)) {
+		//if (buttonStart.getText() == getResources().getString(R.string.Stop)) {
 			buttonStart.setText(getResources().getString(R.string.Insert));
 			String InsertStringInsertype = "Stop";
 			
@@ -737,7 +739,8 @@ public class Main extends Activity {
 					sStartLat = Double.toString(dStartLat);
 					sStartLong = Double.toString(dStartLong);
 
-					tv.setText("Cumulative Distance: " + cumDist + " distanceBetween: " + results[0]
+					// convert the distance numbers to miles rather then the default meters.
+					tv.setText("TripID: " + InsertStringTripId + "\n\tCumulative Distance: " + cumDist / 1609.344 + " \n\tdistanceBetween: " + results[0] / 1609.344
 							+ "\n\nstart Lat: " + sStartLat + " start Long: "
 							+ sStartLong + "\nstop Lat: " + sStopLat
 							+ "stop Long: " + sStopLong);
@@ -747,7 +750,7 @@ public class Main extends Activity {
 
 					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
 							.show();
-					dh.insert(InsertStringInsertype, InsertStringLat,
+					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
 							InsertStringLon, dist2Prev, cumDist);
 
 				} else {
@@ -758,5 +761,5 @@ public class Main extends Activity {
 		
 		// Close of buttonStop.setOnClickListener
 	//	buttonStop.setClickable(false);
-	}
+	//}
 }

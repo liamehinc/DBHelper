@@ -13,12 +13,12 @@ import java.util.List;
 
 public class DBHelper {      
 	private static final String DATABASE_NAME = "trips.db";    
-	private static final int DATABASE_VERSION = 9;    
+	private static final int DATABASE_VERSION = 11;    
 	private static final String TABLE_NAME = "coordinates";      
 	private Context context;    
 	private SQLiteDatabase db;      
 	private SQLiteStatement insertStmt;    
-	private static final String INSERT = "insert into " + TABLE_NAME + " (insertype,lat,lon,dist2Prev,cumDist,created_date) values (?,?,?,?,?,?)";      
+	private static final String INSERT = "insert into " + TABLE_NAME + " (tripid,insertype,lat,lon,dist2Prev,cumDist,created_date) values (?,?,?,?,?,?,?)";      
 	public DBHelper(Context context) {       
 		this.context = context;       
 		OpenHelper openHelper = new OpenHelper(this.context);       
@@ -26,12 +26,13 @@ public class DBHelper {
 		this.insertStmt = this.db.compileStatement(INSERT);   
 		}     
 	
-	public long insert(String insertype,Double lat, Double lon, Double dist2PrevCoord, Double cumDist) {  
-		this.insertStmt.bindString(1, insertype);
-		this.insertStmt.bindDouble(2,lat);
-		this.insertStmt.bindDouble(3,lon);
-		this.insertStmt.bindDouble(4,dist2PrevCoord);
-		this.insertStmt.bindDouble(5,cumDist);
+	public long insert(int tripid, String insertype,Double lat, Double lon, Double dist2PrevCoord, Double cumDist) {  
+		this.insertStmt.bindDouble(1, tripid);
+		this.insertStmt.bindString(2, insertype);
+		this.insertStmt.bindDouble(3,lat);
+		this.insertStmt.bindDouble(4,lon);
+		this.insertStmt.bindDouble(5,dist2PrevCoord);
+		this.insertStmt.bindDouble(6,cumDist);
 
 		//insert date as GMT time (to avoid conflicts when changing time-zones
 		Date today = new Date();
@@ -57,16 +58,32 @@ public class DBHelper {
         return strRow; 
     }
 */	
+	
+	public int getTripId()	{	
+		List<String> list = selectOneRow("");
+		
+		if (list.isEmpty()) {
+			// this will be the first trip
+			return 0;
+		}
+		else {
+			// this will be a subsequent trip of id 1 greater then the previous id
+			return (int) Double.parseDouble(list.get(5)) + 1;
+		}
+		
+		
+	}
+	
 	public List<String> selectOneRow(String whereClause) {      
 		List<String> list = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype","lat","lon","dist2Prev","cumDist"}, "insertype like '" + whereClause + "%'",null, null, null, "coordinateid desc","1");
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype","lat","lon","dist2Prev","cumDist","tripid"}, "insertype like '" + whereClause + "%'",null, null, null, "coordinateid desc","1");
 		if (cursor.moveToFirst()) {
 				list.add(cursor.getString(0));
 				list.add(Double.toString(cursor.getDouble(1)));
 				list.add(Double.toString(cursor.getDouble(2)));
 				list.add(Double.toString(cursor.getDouble(3)));
 				list.add(Double.toString(cursor.getDouble(4)));
-				
+				list.add(Double.toString(cursor.getDouble(5)));
 			}
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();    
@@ -76,7 +93,7 @@ public class DBHelper {
 	
 	public List<String> selectAll(String sortstring) {      
 		List<String> list = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","dist2Prev","cumDist","created_date",sortstring},null, null, null, null, sortstring);
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","dist2Prev","cumDist","created_date","tripid",sortstring},null, null, null, null, sortstring);
 		if (cursor.moveToFirst()) {
 			do {
 				list.add(cursor.getString(0));
@@ -85,6 +102,7 @@ public class DBHelper {
 				list.add(Double.toString(cursor.getDouble(3)));
 				list.add(Double.toString(cursor.getDouble(4)));
 				list.add(cursor.getString(5));
+				list.add(Double.toString(cursor.getDouble(6)));
 				}
 			while (cursor.moveToNext());
 			}
@@ -118,10 +136,10 @@ public class DBHelper {
 			
 			@Override      
 			public void onCreate(SQLiteDatabase db) {         
-				db.execSQL("CREATE TABLE coordinates (coordinateid INTEGER PRIMARY KEY AUTOINCREMENT, insertype TEXT, lat real, lon real, dist2Prev real, cumDist real, created_date date default CURRENT_DATE)");      
-				db.execSQL("CREATE TABLE " + "trip (tripid INTEGER PRIMARY KEY AUTOINCREMENT, catid integer, name text, description text, distance real, duration text, vehicleid integer, starttime text, stoptime text)");
-				db.execSQL("CREATE TABLE " + "category (catid INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text, isdeductible boolean)");
-				db.execSQL("CREATE TABLE " + "route (routeid INTEGER PRIMARY KEY AUTOINCREMENT, tripid integer)");
+				db.execSQL("CREATE TABLE coordinates (coordinateid INTEGER PRIMARY KEY AUTOINCREMENT, tripid integer, insertype TEXT, lat real, lon real, dist2Prev real, cumDist real, created_date date default CURRENT_DATE)");      
+				//db.execSQL("CREATE TABLE " + "trip (tripid INTEGER PRIMARY KEY AUTOINCREMENT, catid integer, name text, description text, distance real, duration text, vehicleid integer, starttime text, stoptime text)");
+				//db.execSQL("CREATE TABLE " + "category (catid INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text, isdeductible boolean)");
+				//db.execSQL("CREATE TABLE " + "route (routeid INTEGER PRIMARY KEY AUTOINCREMENT, tripid integer)");
 				}         
 			
 			@Override     
