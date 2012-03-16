@@ -2,12 +2,16 @@
 <resources>
     <string name="hello">Welcome to MileageTracker!!!</string>
     <string name="app_name">MileageTracker</string>
-    <string name="Insert">Start tracking</string>
+    <string name="Insert">Start Tracking</string>
     <string name="Retrieve">Retrieve All Coordinate Entries</string>
     <string name="Retrieve1">Retrieve 1 coordinate entry</string>
-    <string name="Stop">Stop tracking</string>
+    <string name="Stop">Stop Tracking</string>
     <string name="Delete">Truncate all rows</string>
     <string name="ManualInsert">Manual Insert location</string>
     <string name="GPSStatus">Get GPS Status</string>
     <string name="Export">Export My Data</string>
+    <string name="labelStart">Start Tracking</string>
+    <string name="Units">Units</string>
+    <string name="Miles">Miles</string>
+    <string name="Meters">Meters</string>
 </resources>
