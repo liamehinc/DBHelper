@@ -348,7 +348,7 @@ public class Main extends Activity {
 
 				// make sure there is an active trip b4 logging to db
 
-				//if (isTripActive()) {
+				if (isTripActive()) {
 
 					String InsertStringInsertype = "Auto";
 					Double InsertStringLat = mlocation.getLatitude();
@@ -370,7 +370,7 @@ public class Main extends Activity {
 					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,
 							dist2Prev, dcumDist);
 
-				//}// end isTripActive()
+				}// end isTripActive()
 
 			}
 
