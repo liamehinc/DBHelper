@@ -60,16 +60,21 @@ public class DBHelper {
 */	
 	public List<String> getTripInfo(String groupstring){
 		List<String> lTripInfo = new ArrayList<String>();
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { groupstring, "max(created_date)", "max(cumDist)"},null, null, null, null, null);
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { groupstring, "max(created_date)", "max(cumDist)"},null, null, groupstring, null, groupstring +" asc");
 		
 		if (cursor.moveToFirst()) {
+			do {
 				lTripInfo.add(Double.toString(cursor.getDouble(0)));
 				lTripInfo.add(cursor.getString(1));
 				lTripInfo.add(Double.toString(cursor.getDouble(2)));
 				}
+			while (cursor.moveToNext());
+		}
+		
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();    
 			}   
+		
 		return lTripInfo;  
 	}
 	
