@@ -81,10 +81,10 @@ public class Main extends Activity {
 		// Close Delete all rows
 
 		// Start Button activity
-		buttonStart = (Button) findViewById(R.id.button1);
-		buttonStart.setBackgroundColor(Color.GREEN);
-		buttonStart.setWidth(560);
-		buttonStart.setHeight(90);
+		buttonStart = (Button) findViewById(R.id.btnStart);
+		//buttonStart.setBackgroundColor(Color.GREEN);
+		//buttonStart.setWidth(560);
+		//buttonStart.setHeight(90);
 		
 		buttonStart.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -112,12 +112,12 @@ public class Main extends Activity {
 					//if (buttonStart.getText() == getResources().getString(R.string.Insert)) {
 					if (!isTracking) {
 						StartTrack(mLocation);
-						buttonStart.setBackgroundColor(Color.RED);
+						buttonStart.setBackgroundResource(R.drawable.pressed_button);
 						isTracking=true;
 						}
 					else {
 						StopTrack();
-						buttonStart.setBackgroundColor(Color.GREEN);
+						buttonStart.setBackgroundResource(R.drawable.nice_button);
 						isTracking=false;
 					}
 					
@@ -452,7 +452,7 @@ public class Main extends Activity {
 		{
 			//buttonStart.setText(sButtonState);
 			buttonStart.setText(getResources().getString(R.string.Stop));
-			buttonStart.setBackgroundColor(Color.RED);
+			buttonStart.setBackgroundResource(R.drawable.pressed_button);
 		}
 	}
 	
