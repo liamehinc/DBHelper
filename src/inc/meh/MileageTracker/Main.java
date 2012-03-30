@@ -730,10 +730,11 @@ public class Main extends Activity {
 		tl.addView(trc);
 		
 		int i = 0;
+		double dTotalDistance=0;
 
     	List<String> names = dh.getTripInfo("tripid");
 		
-		for (int row=0; row< names.size()/3; row++) {
+		for (int row=0; row < (names.size()/3); row++) {
 
 			TableRow tr=new TableRow(this);
 			tr.setLayoutParams(tableRowParams);
@@ -742,6 +743,12 @@ public class Main extends Activity {
 				TextView tv = new TextView(this);
 				tv.setText(names.get(i));
 				tr.addView(tv);
+				
+				if (col==2)
+				{
+					dTotalDistance+= Double.parseDouble(names.get(i));
+				}
+				
 				i++;
 			}
 		
@@ -749,6 +756,20 @@ public class Main extends Activity {
 		tl.addView(tr);
 		}
 		
+		TableRow trBottom=new TableRow(this);
+		trBottom.setLayoutParams(tableRowParams);
+
+		TextView tvBottom1 = new TextView(this);
+		
+		tvBottom1.setText("Total: ");
+		trBottom.addView(tvBottom1);
+		
+		TextView tvBottom2 = new TextView(this);
+		tvBottom2.setText(Double.toString(dTotalDistance));
+		trBottom.addView(tvBottom2);
+		
+		tl.addView(trBottom);
+				
 		//removeContentView(tl);
 		//setContentView(tl);
 		//setContentView(tl.
@@ -962,7 +983,7 @@ public class Main extends Activity {
 					*/
 
 					// convert the distance numbers to miles rather then the default meters.
-					tv.setText("Trip # " + InsertStringTripId + "\nTrip Distance:\n" + Util.Meters2Miles(cumDist));
+					tv.setText("Trip # " + InsertStringTripId + "\nTrip Distance: " + Util.Meters2Miles(cumDist));
 					
 					/* + " \n\tdistanceBetween: " + results[0] / 1609.344
 							+ "\n\nstart Lat: " + sStartLat + " start Long: "

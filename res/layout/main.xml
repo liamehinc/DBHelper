@@ -62,7 +62,9 @@ android:text="" />
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:stretchColumns="1"
-    android:id="@+id/ShowDataTable">
+    android:id="@+id/ShowDataTable"
+    android:paddingTop="10dp"
+    android:paddingBottom="15dp">
     
           </TableLayout>
 
