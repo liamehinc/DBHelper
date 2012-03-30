@@ -36,7 +36,7 @@ public class Main extends Activity {
 	private TextView tv;
 	private DAO dh;
 	private LocationManager mLocationManager;
-	LocationListener mLocationListener;
+	public LocationListener mLocationListener;
 	Button buttonStop;
 	Button buttonStart;
 	Button buttonDelete;
@@ -45,7 +45,7 @@ public class Main extends Activity {
 	Button buttonRetrieve1;
 	Button buttonExport;
 	private boolean debug=false;
-	private boolean isTracking=false;
+	public boolean isTracking=false;
 	int InsertStringTripId;
 	int iMinTime=3000;
 	int iMinDist=1;
@@ -152,7 +152,7 @@ public class Main extends Activity {
 			@Override
 			public void onClick(View v) {
 				// Perform action on click
-				String InsertString;
+				//String InsertString;
 
 				// String coordinates = dh.SelectRow("In");
 				String locationprovider = mLocationManager.getBestProvider(criteria, true);
@@ -170,12 +170,14 @@ public class Main extends Activity {
 					double dist2Prev = calcedDist[0];
 					double dcumDist = calcedDist[1];
 					
-					InsertString = InsertStringInsertype + "," + InsertStringLat + "," + InsertStringLon + "," + dist2Prev + "," + dcumDist;
+					//InsertString = InsertStringInsertype + "," + InsertStringLat + "," + InsertStringLon + "," + dist2Prev + "," + dcumDist;
 					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
+					
 					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);
 
-					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+					//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+					
 				} else {
 					Toast.makeText(
 							Main.this,
@@ -457,9 +459,7 @@ public class Main extends Activity {
 	        		AlertDialog alert = builder.create();
 	        		
 	        		alert.show();
-	        		
-//	        		showDialog(0);
-	        		
+
 	        	}
 
 	        	return true;
@@ -469,7 +469,7 @@ public class Main extends Activity {
 	            return true;
 	        
 	        case R.id.exit:
-	        	finish();
+	        	finishConfirm();
 	            return true;
 	            
 	        default:
@@ -478,6 +478,66 @@ public class Main extends Activity {
 
 		//return true;
 	}
+	
+	
+	@Override
+	public void onBackPressed() {
+	   finishConfirm();
+	}
+	
+	//@Override
+	public void finishConfirm()
+	{
+
+		if (isTracking)
+		{
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Are you sure you want to exit while a trip is running?\n\nTo use other applications, please use the Home button or select Exit and Keep Trip Running.")
+			       .setCancelable(false)
+			       .setTitle("Confirm Exit")
+			       .setPositiveButton("Exit and Stop Trip", new DialogInterface.OnClickListener() {
+			         
+			    	   public void onClick(DialogInterface dialog, int id) {
+			                //MyActivity.this.finish();
+			    		   
+			    		   Main.this.finish();
+			    		   
+			    	   }
+			       })
+			       .setNeutralButton("Exit and Keep Trip Running", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                
+			        	   Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+			        	   homeIntent.setAction(Intent.CATEGORY_HOME);
+			        	   
+			        	   Main.this.startActivity(homeIntent);
+			        	   
+			        	   //onPause();
+			        	   //onStop();
+			           }
+			           })
+			       .setNegativeButton("Don't Exit", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                dialog.cancel();
+			           }
+			       }
+			       
+			       );
+			
+			AlertDialog alert = builder.create();
+			
+			alert.show();
+			
+			
+		}
+		else
+		{
+			//exit without prompt
+			Main.this.finish();
+		}
+		
+}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState)
@@ -634,6 +694,30 @@ public class Main extends Activity {
 	{
 		tv = (TextView) findViewById(R.id.TextView1);
 
+		
+		String columnString ="Trip Number, Date Created, Distance Travelled ";
+    	
+    	String combinedString = columnString + "\n"; //+ dataString;
+
+    	List<String> names = dh.getTripInfo("tripid");
+    	
+    	StringBuilder sb = new StringBuilder();
+		
+		int i = 0;
+		
+		for (String name : names) {
+			 
+			sb.append(name + ", ");
+			i++;
+			
+			//end of line
+			if (i==3) {
+				sb.append("\n");
+				i=0;
+			}
+		}
+		
+		/*
 		List<String> names = dh.selectAll("coordinateid");
 		StringBuilder sb = new StringBuilder();
 		sb.append("Coordinates in database:\n");
@@ -642,8 +726,12 @@ public class Main extends Activity {
 			// sb.append("\n");
 		}
 
+	*/
+		combinedString += sb.toString();
+		
 		Log.d("EXAMPLE", "names size - " + names.size());
-		tv.setText(sb.toString());
+		tv.setText(combinedString);
+		
 	}
 	
 	private void TruncateData()
@@ -651,6 +739,8 @@ public class Main extends Activity {
 		tv = (TextView) findViewById(R.id.TextView1);
 
 		dh.deleteAll();
+		
+		ShowAllData();
 	}
 	
 	
@@ -739,16 +829,14 @@ public class Main extends Activity {
 		Double InsertStringLat = mLocation.getLatitude();
 		Double InsertStringLon = mLocation.getLongitude();
 
-		String InsertString = InsertStringInsertype + ",'"
-				+ InsertStringLat + "','" + InsertStringLon + "','";
+		//String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','";
 
-		Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
-				.show();
+		//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+		
 		dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
 				InsertStringLon, 0.0, 0.0);
 
-		Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
-				.show();
+		//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 	}
 	
 	
@@ -758,12 +846,16 @@ public class Main extends Activity {
 			buttonStart.setText(getResources().getString(R.string.Insert));
 			String InsertStringInsertype = "Stop";
 			
-			
+			/*
 				String sStartLat = "";
 				String sStartLong = "";
 
 				String sStopLat = "";
 				String sStopLong = "";
+				
+				*/
+				
+				
 				//mLocationManager.removeUpdates(mLocationListener);  // try moving this further down in code
 
 				// calculate distance
@@ -811,23 +903,27 @@ public class Main extends Activity {
 					// show me the money!!!
 					android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
 
+					/*
 					sStopLat = InsertStringLat.toString();
 					sStopLong = InsertStringLon.toString();
 
 					sStartLat = Double.toString(dStartLat);
 					sStartLong = Double.toString(dStartLong);
+					*/
 
 					// convert the distance numbers to miles rather then the default meters.
-					tv.setText("TripID: " + InsertStringTripId + "\n\tCumulative Distance: " + Util.Meters2Miles(cumDist)  + " \n\tdistanceBetween: " + results[0] / 1609.344
+					tv.setText("TripID: " + InsertStringTripId + "\n\tTrip Distance: " + Util.Meters2Miles(cumDist));
+					
+					/* + " \n\tdistanceBetween: " + results[0] / 1609.344
 							+ "\n\nstart Lat: " + sStartLat + " start Long: "
 							+ sStartLong + "\nstop Lat: " + sStopLat
 							+ "stop Long: " + sStopLong);
+							*/
 
-					String InsertString = InsertStringInsertype + ",'"
-							+ InsertStringLat + "','" + InsertStringLon + "','";
+					//String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','";
 
-					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
-							.show();
+					//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+					
 					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
 							InsertStringLon, dist2Prev, cumDist);
 
