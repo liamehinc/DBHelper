@@ -1,4 +1,6 @@
-package inc.meh.DBHelper;
+package inc.meh.MileageTracker;
+
+import inc.meh.MileageTracker.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +13,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -20,7 +22,7 @@ import android.widget.EditText;
 public class Email extends Activity {
         Button send;
         EditText address, subject, emailtext;
-    	private DBHelper dh;
+    	private DAO dh;
 
 
         @Override
@@ -31,7 +33,7 @@ public class Email extends Activity {
         
         setContentView(R.layout.email);
         
-        this.dh = new DBHelper(Email.this);
+        this.dh = new DAO(Email.this);
        
         send=(Button) findViewById(R.id.emailsendbutton);
         address=(EditText) findViewById(R.id.emailaddress);

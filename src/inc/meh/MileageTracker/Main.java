@@ -1,4 +1,6 @@
-package inc.meh.DBHelper;
+package inc.meh.MileageTracker;
+
+import inc.meh.MileageTracker.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,9 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import android.app.Activity;
+import android.app.AlertDialog;
+//import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
+//import android.graphics.Color;
 //import android.database.Cursor;
 import android.location.*;
 import android.net.Uri;
@@ -27,8 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Main extends Activity {
+//	private static final int DIALOG_CONFIRM_DELETE_ID = 0;
 	private TextView tv;
-	private DBHelper dh;
+	private DAO dh;
 	private LocationManager mLocationManager;
 	LocationListener mLocationListener;
 	Button buttonStop;
@@ -41,6 +47,8 @@ public class Main extends Activity {
 	private boolean debug=false;
 	private boolean isTracking=false;
 	int InsertStringTripId;
+	int iMinTime=3000;
+	int iMinDist=1;
 
 	final Criteria criteria = new Criteria();
 	
@@ -52,7 +60,7 @@ public class Main extends Activity {
 		setContentView(R.layout.main);
 
 		// initialize the database
-		this.dh = new DBHelper(Main.this);
+		this.dh = new DAO(Main.this);
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 		if (!mLocationManager
@@ -98,7 +106,7 @@ public class Main extends Activity {
 						criteria, true);
 
 				mLocationManager.requestLocationUpdates(
-						LocationManager.GPS_PROVIDER, 60000, 10, mLocationListener);
+						LocationManager.GPS_PROVIDER, iMinTime, iMinDist, mLocationListener);
 				Location mLocation = mLocationManager
 						.getLastKnownLocation(locationprovider);
 
@@ -126,7 +134,7 @@ public class Main extends Activity {
 					
 					} // if (mLocatoin != null) 
 					else {
-						Toast.makeText(Main.this, "turn on your GPS lame-o",
+						Toast.makeText(Main.this, "Please enable a location service in Settings.  No location service is detected.",
 								Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -191,7 +199,7 @@ public class Main extends Activity {
 			public void onClick(View v) {
 				List<String> OneRow = dh.selectOneRow("");
 				if (OneRow.isEmpty()) {
-					tv.setText("there are no coordinate entries");
+					tv.setText("There are no coordinate entries");
 				}
 				else {
 					tv.setText(OneRow.toString());
@@ -348,7 +356,7 @@ public class Main extends Activity {
 
 				// make sure there is an active trip b4 logging to db
 
-				if (isTripActive()) {
+				if (isTracking) {
 
 					String InsertStringInsertype = "Auto";
 					Double InsertStringLat = mlocation.getLatitude();
@@ -362,13 +370,18 @@ public class Main extends Activity {
 					double dist2Prev = calcedDist[0];
 					double dcumDist = calcedDist[1];
 					
-					String InsertString = InsertStringInsertype + ","
-							+ InsertStringLat + "," + InsertStringLon + ","
-							+ dist2Prev + "," + dcumDist;
+					//String InsertString = InsertStringInsertype + ","
+					//		+ InsertStringLat + "," + InsertStringLon + ","
+					//		+ dist2Prev + "," + dcumDist;
+					
 					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
 					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,
 							dist2Prev, dcumDist);
+					
+					//String sCumDist= dcumDist.toString();
+					
+					tv.setText("Total Trip Mileage: " + Util.Meters2Miles(dcumDist));
 
 				}// end isTripActive()
 
@@ -410,9 +423,45 @@ public class Main extends Activity {
 	        	return true;
 	        
 	        case R.id.truncate_data:
-	        	TruncateData();
-	        	Toast.makeText(this, "Erasing ALL data...", Toast.LENGTH_SHORT).show();
 	        	
+	        	if (isTracking){
+	        		Toast.makeText(this, "A trip is running; please stop your trip before deleting data.", Toast.LENGTH_LONG).show();
+	        		
+	        	}
+	        	else
+	        	{
+	        		
+	        		//confirm before delete
+	        		//Toast.makeText(this, "confirm", Toast.LENGTH_SHORT).show();
+	        		
+	    	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	        		builder.setMessage("Are you sure you want to remove ALL Data?")
+	        		       .setCancelable(false)
+	        		       .setTitle("Confirm Delete")
+	        		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	        		         
+	        		    	   public void onClick(DialogInterface dialog, int id) {
+	        		                //MyActivity.this.finish();
+	        		    		   
+	        		    		   TruncateData();
+	        		    		  //Toast.makeText(this, "Erasing ALL data...", Toast.LENGTH_SHORT).show();
+	        		           
+	        		    	   }
+	        		       })
+	        		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	        		           public void onClick(DialogInterface dialog, int id) {
+	        		                dialog.cancel();
+	        		           }
+	        		       });
+	        		
+	        		AlertDialog alert = builder.create();
+	        		
+	        		alert.show();
+	        		
+//	        		showDialog(0);
+	        		
+	        	}
+
 	        	return true;
 	        
 	        case R.id.show_all_data:
@@ -436,8 +485,10 @@ public class Main extends Activity {
 		//save button state
 		outState.putString("ButtonState", buttonStart.getText().toString());
 		outState.putBoolean("isTracking", isTracking);
+		//outState.putString(tv., value)
 		
 		super.onSaveInstanceState(outState);
+		
 	}
 
 	@Override
@@ -445,8 +496,7 @@ public class Main extends Activity {
 	{
 		super.onRestoreInstanceState(savedInstanceState);
 		//---retrieve the information persisted earlier---
-		String sButtonState = savedInstanceState.getString("ButtonState");
-		
+		//String sButtonState = savedInstanceState.getString("ButtonState");
 		isTracking = savedInstanceState.getBoolean("isTracking");
 		
 		//if (sButtonState == getResources().getString(R.string.Stop))
@@ -458,15 +508,28 @@ public class Main extends Activity {
 		}
 	}
 	
-	// helper method to get last location in db for breadcrumbs
-	private boolean isTripActive() {
-		if (isTracking) {
-			return true;
-		} else {
-			return false;
-		}
+	
+		
+	/*
+	protected Dialog onCreateDialog(int id) {
+	    Dialog dialog = null;
+	    switch(id) {
+	    case 0:
+	        // Confirm delete all data
+	    	
 
+    		
+	    	
+	    	
+	        break;
+	    default:
+	        dialog = null;
+	    }
+	    return dialog;
 	}
+
+	*/
+	
 
 	
 	private void ExportData()
@@ -492,6 +555,8 @@ public class Main extends Activity {
 			 
 			sb.append(name + ", ");
 			i++;
+			
+			//end of line
 			if (i==3) {
 				sb.append("\n");
 				i=0;
@@ -563,6 +628,8 @@ public class Main extends Activity {
 
 	}
 	
+
+
 	private void ShowAllData()
 	{
 		tv = (TextView) findViewById(R.id.TextView1);
@@ -751,7 +818,7 @@ public class Main extends Activity {
 					sStartLong = Double.toString(dStartLong);
 
 					// convert the distance numbers to miles rather then the default meters.
-					tv.setText("TripID: " + InsertStringTripId + "\n\tCumulative Distance: " + cumDist / 1609.344 + " \n\tdistanceBetween: " + results[0] / 1609.344
+					tv.setText("TripID: " + InsertStringTripId + "\n\tCumulative Distance: " + Util.Meters2Miles(cumDist)  + " \n\tdistanceBetween: " + results[0] / 1609.344
 							+ "\n\nstart Lat: " + sStartLat + " start Long: "
 							+ sStartLong + "\nstop Lat: " + sStopLat
 							+ "stop Long: " + sStopLong);
