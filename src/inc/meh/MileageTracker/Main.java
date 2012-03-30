@@ -757,7 +757,20 @@ public class Main extends Activity {
 		}
 		
 		TableRow trBottom=new TableRow(this);
-		trBottom.setLayoutParams(tableRowParams);
+		
+		int leftMarginB=1;
+		int topMarginB=7;
+		int rightMarginB=1;
+		int bottomMarginB=1;
+
+		TableLayout.LayoutParams tableRowParamsB=
+			  new TableLayout.LayoutParams
+			  (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
+
+		
+		tableRowParamsB.setMargins(leftMarginB, topMarginB, rightMarginB, bottomMarginB);
+
+		trBottom.setLayoutParams(tableRowParamsB);
 
 		TextView tvBottom1 = new TextView(this);
 		
@@ -770,42 +783,7 @@ public class Main extends Activity {
 		
 		tl.addView(trBottom);
 				
-		//removeContentView(tl);
-		//setContentView(tl);
-		//setContentView(tl.
-			
-			
-		//setContentView(tl);
-			/*
-			 sb.append(name + ", ");
-			 
-			i++;
-			
-			//end of line
-			if (i==3) {
-				sb.append("\n");
-				i=0;
-			}
-		}
-			
-			
-		List<String> names = dh.selectAll("coordinateid");
-		StringBuilder sb = new StringBuilder();
-		sb.append("Coordinates in database:\n");
-		for (String name : names) {
-			sb.append(name + ", ");
-			// sb.append("\n");
-		}
-
-	*/
-	//	combinedString += sb.toString();
-		
 		Log.d("EXAMPLE", "names size - " + names.size());
-		//tv.setText(combinedString);
-		
-		
-		
-		
 	}
 	
 	private void TruncateData()
