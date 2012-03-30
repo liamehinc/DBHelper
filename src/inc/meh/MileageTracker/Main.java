@@ -428,7 +428,7 @@ public class Main extends Activity {
 	    switch (item.getItemId()) {
 	        case R.id.export_data:
 	        	ExportData();
-	        	Toast.makeText(this, "Exporting data...", Toast.LENGTH_SHORT).show();
+	        	Toast.makeText(this, "Exporting trips...", Toast.LENGTH_SHORT).show();
 	        	return true;
 	        
 	        case R.id.truncate_data:
@@ -445,7 +445,7 @@ public class Main extends Activity {
 	        		//Toast.makeText(this, "confirm", Toast.LENGTH_SHORT).show();
 	        		
 	    	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	        		builder.setMessage("Are you sure you want to remove ALL Data?")
+	        		builder.setMessage("Are you sure you want to remove ALL trips?\nThis cannot be undone.")
 	        		       .setCancelable(false)
 	        		       .setTitle("Confirm Delete")
 	        		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
