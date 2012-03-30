@@ -962,7 +962,7 @@ public class Main extends Activity {
 					*/
 
 					// convert the distance numbers to miles rather then the default meters.
-					tv.setText("Trip #: " + InsertStringTripId + "\n\tTrip Distance: " + Util.Meters2Miles(cumDist));
+					tv.setText("Trip # " + InsertStringTripId + "\nTrip Distance:\n" + Util.Meters2Miles(cumDist));
 					
 					/* + " \n\tdistanceBetween: " + results[0] / 1609.344
 							+ "\n\nstart Lat: " + sStartLat + " start Long: "
