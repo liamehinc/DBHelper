@@ -454,7 +454,7 @@ public class Main extends Activity {
 	        		                //MyActivity.this.finish();
 	        		    		   
 	        		    		   TruncateData();
-	        		    		  //Toast.makeText(this, "Erasing ALL data...", Toast.LENGTH_SHORT).show();
+	        		    		  Toast.makeText(Main.this, "Erasing ALL Trips...", Toast.LENGTH_SHORT).show();
 	        		           
 	        		    	   }
 	        		       })
