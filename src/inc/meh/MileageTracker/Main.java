@@ -501,7 +501,7 @@ public class Main extends Activity {
 		{
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("Are you sure you want to exit while a trip is running?\n\nTo use other applications, please use the Home button or select Exit and Keep Trip Running.")
+			builder.setMessage("Are you sure you want to exit while a trip is running?\n\nTo use other applications, please use the Home button.  You can still track but the accuracy will be reduced when running in the background.")
 			       .setCancelable(false)
 			       .setTitle("Confirm Exit")
 			       .setPositiveButton("Exit and Stop Trip", new DialogInterface.OnClickListener() {
@@ -510,6 +510,7 @@ public class Main extends Activity {
 			    		   Main.this.finish();
 			    	   }
 			       })
+			       /*
 			       .setNeutralButton("Exit and Keep Trip Running", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			                
@@ -521,6 +522,7 @@ public class Main extends Activity {
 			        	   onStop();
 			           }
 			           })
+			           */
 			       .setNegativeButton("Don't Exit", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			                dialog.cancel();
