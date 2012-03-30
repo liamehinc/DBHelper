@@ -31,6 +31,7 @@ public final class R {
         public static final int LinearLayout01=0x7f070000;
         public static final int LinearLayout02=0x7f070001;
         public static final int LinearLayout03=0x7f070003;
+        public static final int ShowDataTable=0x7f07000f;
         public static final int TextView1=0x7f07000e;
         public static final int btnExport=0x7f07000c;
         public static final int btnStart=0x7f070007;
@@ -42,11 +43,11 @@ public final class R {
         public static final int emailsendbutton=0x7f070006;
         public static final int emailsubject=0x7f070004;
         public static final int emailtext=0x7f070005;
-        public static final int exit=0x7f070012;
-        public static final int export_data=0x7f07000f;
+        public static final int exit=0x7f070013;
+        public static final int export_data=0x7f070010;
         public static final int out_text=0x7f07000d;
-        public static final int show_all_data=0x7f070011;
-        public static final int truncate_data=0x7f070010;
+        public static final int show_all_data=0x7f070012;
+        public static final int truncate_data=0x7f070011;
     }
     public static final class layout {
         public static final int email=0x7f030000;
@@ -63,9 +64,11 @@ public final class R {
         public static final int ManualInsert=0x7f050007;
         public static final int Meters=0x7f05000d;
         public static final int Miles=0x7f05000c;
+        public static final int NoGPS=0x7f05000e;
         public static final int Retrieve=0x7f050003;
         public static final int Retrieve1=0x7f050004;
         public static final int Stop=0x7f050005;
+        public static final int TruncateWhileTripRunning=0x7f05000f;
         public static final int Units=0x7f05000b;
         public static final int app_name=0x7f050001;
         public static final int hello=0x7f050000;

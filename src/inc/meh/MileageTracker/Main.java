@@ -27,7 +27,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -131,11 +134,14 @@ public class Main extends Activity {
 						isTracking=false;
 					}
 					
+					TableLayout tl=(TableLayout) findViewById(R.id.ShowDataTable);
+
+					//empty table to make sure data is not appended for each click of menu
+					tl.removeAllViews();
 					
 					} // if (mLocatoin != null) 
 					else {
-						Toast.makeText(Main.this, "Please enable a location service in Settings.  No location service is detected.",
-								Toast.LENGTH_SHORT).show();
+						Toast.makeText(Main.this, getResources().getString(R.string.NoGPS),	Toast.LENGTH_SHORT).show();
 				}
 			}
 
@@ -383,7 +389,8 @@ public class Main extends Activity {
 					
 					//String sCumDist= dcumDist.toString();
 					
-					tv.setText("Total Trip Mileage: " + Util.Meters2Miles(dcumDist));
+					tv.setTextSize(24);
+					tv.setText("Total Trip Mileage: \n" + Util.Meters2Miles(dcumDist));
 
 				}// end isTripActive()
 
@@ -427,7 +434,8 @@ public class Main extends Activity {
 	        case R.id.truncate_data:
 	        	
 	        	if (isTracking){
-	        		Toast.makeText(this, "A trip is running; please stop your trip before deleting data.", Toast.LENGTH_LONG).show();
+	        		
+	        		Toast.makeText(this, getResources().getString(R.string.TruncateWhileTripRunning), Toast.LENGTH_LONG).show();
 	        		
 	        	}
 	        	else
@@ -499,22 +507,18 @@ public class Main extends Activity {
 			       .setPositiveButton("Exit and Stop Trip", new DialogInterface.OnClickListener() {
 			         
 			    	   public void onClick(DialogInterface dialog, int id) {
-			                //MyActivity.this.finish();
-			    		   
 			    		   Main.this.finish();
-			    		   
 			    	   }
 			       })
 			       .setNeutralButton("Exit and Keep Trip Running", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			                
-			        	   Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-			        	   homeIntent.setAction(Intent.CATEGORY_HOME);
+			        	   //Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+			        	   //homeIntent.setAction(Intent.CATEGORY_HOME);
+			        	   //Main.this.startActivity(homeIntent);
 			        	   
-			        	   Main.this.startActivity(homeIntent);
-			        	   
-			        	   //onPause();
-			        	   //onStop();
+			        	   onPause();
+			        	   onStop();
 			           }
 			           })
 			       .setNegativeButton("Don't Exit", new DialogInterface.OnClickListener() {
@@ -692,22 +696,68 @@ public class Main extends Activity {
 
 	private void ShowAllData()
 	{
-		tv = (TextView) findViewById(R.id.TextView1);
 
+		String[] columns ={"Trip ", "Date Created ", "Distance Travelled "};
+
+		TableLayout tl=(TableLayout) findViewById(R.id.ShowDataTable);
+
+		//empty table to make sure data is not appended for each click of menu
+		tl.removeAllViews();
 		
-		String columnString ="Trip Number, Date Created, Distance Travelled ";
-    	
-    	String combinedString = columnString + "\n"; //+ dataString;
+		//add the column headers
+		TableRow trc=new TableRow(this);
+		trc.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT ));
+        
+		TableLayout.LayoutParams tableRowParams=
+		  new TableLayout.LayoutParams
+		  (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
 
-    	List<String> names = dh.getTripInfo("tripid");
-    	
-    	StringBuilder sb = new StringBuilder();
+		int leftMargin=0;
+		int topMargin=0;
+		int rightMargin=0;
+		int bottomMargin=0;
+
+		tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+
+		trc.setLayoutParams(tableRowParams);
+		
+		for (String col : columns) {
+			TextView tvc = new TextView(this);
+			tvc.setText(col);
+			trc.addView(tvc);
+		}
+		
+		tl.addView(trc);
 		
 		int i = 0;
+
+    	List<String> names = dh.getTripInfo("tripid");
 		
-		for (String name : names) {
+		for (int row=0; row< names.size()/3; row++) {
+
+			TableRow tr=new TableRow(this);
+			tr.setLayoutParams(tableRowParams);
+			
+			for (int col=0; col<3; col++) {
+				TextView tv = new TextView(this);
+				tv.setText(names.get(i));
+				tr.addView(tv);
+				i++;
+			}
+		
+
+		tl.addView(tr);
+		}
+		
+		//removeContentView(tl);
+		//setContentView(tl);
+		//setContentView(tl.
+			
+			
+		//setContentView(tl);
+			/*
+			 sb.append(name + ", ");
 			 
-			sb.append(name + ", ");
 			i++;
 			
 			//end of line
@@ -716,8 +766,8 @@ public class Main extends Activity {
 				i=0;
 			}
 		}
-		
-		/*
+			
+			
 		List<String> names = dh.selectAll("coordinateid");
 		StringBuilder sb = new StringBuilder();
 		sb.append("Coordinates in database:\n");
@@ -727,19 +777,19 @@ public class Main extends Activity {
 		}
 
 	*/
-		combinedString += sb.toString();
+	//	combinedString += sb.toString();
 		
 		Log.d("EXAMPLE", "names size - " + names.size());
-		tv.setText(combinedString);
+		//tv.setText(combinedString);
+		
+		
+		
 		
 	}
 	
 	private void TruncateData()
 	{
-		tv = (TextView) findViewById(R.id.TextView1);
-
 		dh.deleteAll();
-		
 		ShowAllData();
 	}
 	
@@ -912,7 +962,7 @@ public class Main extends Activity {
 					*/
 
 					// convert the distance numbers to miles rather then the default meters.
-					tv.setText("TripID: " + InsertStringTripId + "\n\tTrip Distance: " + Util.Meters2Miles(cumDist));
+					tv.setText("Trip #: " + InsertStringTripId + "\n\tTrip Distance: " + Util.Meters2Miles(cumDist));
 					
 					/* + " \n\tdistanceBetween: " + results[0] / 1609.344
 							+ "\n\nstart Lat: " + sStartLat + " start Long: "

@@ -96,7 +96,7 @@ public class DAO {
 		
 		if (cursor.moveToFirst()) {
 			do {
-				lTripInfo.add(Double.toString(cursor.getDouble(0)));
+				lTripInfo.add(Integer.toString(cursor.getInt(0)));
 
 				lTripInfo.add( UTC2Local(cursor.getString(1)) );
 				

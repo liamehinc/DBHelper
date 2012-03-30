@@ -14,4 +14,6 @@
     <string name="Units">Units</string>
     <string name="Miles">Miles</string>
     <string name="Meters">Meters</string>
+    <string name="NoGPS">Please enable a location service in Settings.  No location service is detected.</string>
+    <string name="TruncateWhileTripRunning">A trip is running; please stop your trip before deleting data.</string>
 </resources>

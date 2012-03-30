@@ -10,10 +10,12 @@ android:layout_width="fill_parent"
 android:layout_height="fill_parent"> 
 
 <TextView android:layout_width="fill_parent"
-android:layout_height="wrap_content"
-android:text="@string/hello"
-android:paddingTop="10dp"
-android:paddingBottom="10dp" />
+	android:layout_height="wrap_content"
+	android:text="@string/hello"
+	android:paddingTop="10dp"
+	android:paddingBottom="15dp"
+	android:textSize="18dp"
+ />
 
 <!--   <Button android:layout_width="wrap_content" android:id="@+id/button1" android:text="@string/Insert" android:layout_height="wrap_content"></Button>
  -->
@@ -49,7 +51,21 @@ android:paddingBottom="10dp" />
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:text="" /> 
-<TextView android:text="" android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/TextView1"></TextView>
+
+<TextView android:id="@+id/TextView1"
+    android:text="" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:paddingBottom="15dp"></TextView>
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="1"
+    android:id="@+id/ShowDataTable">
+    
+          </TableLayout>
+
 </LinearLayout> 
 </ScrollView>
 
