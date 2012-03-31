@@ -307,15 +307,15 @@ public class Main extends Activity {
 		
 		//add the column headers
 		TableRow trc=new TableRow(this);
-		trc.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT ));
+		trc.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT ));
         
 		TableLayout.LayoutParams tableRowParams=
 		  new TableLayout.LayoutParams
-		  (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
+		  (TableLayout.LayoutParams.FILL_PARENT,TableLayout.LayoutParams.FILL_PARENT);
 
-		int leftMargin=0;
+		int leftMargin=1;
 		int topMargin=0;
-		int rightMargin=0;
+		int rightMargin=1;
 		int bottomMargin=0;
 
 		tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
@@ -345,7 +345,7 @@ public class Main extends Activity {
 			
 			for (int col=0; col<3; col++) {
 				TextView tv = new TextView(this);
-				tv.setText(names.get(i));
+				tv.setText(names.get(i)+ " ");
 				tr.addView(tv);
 				
 				if (col==2)
@@ -377,15 +377,17 @@ public class Main extends Activity {
 
 		trBottom.setLayoutParams(tableRowParamsB);
 
+		
 		TextView tvBottom0 = new TextView(this);
 		
 		tvBottom0.setText("");
 		trBottom.addView(tvBottom0);
 		
 		
+		
 		TextView tvBottom1 = new TextView(this);
 		
-		tvBottom1.setText("Total (miles):");
+		tvBottom1.setText("Total (miles): ");
 		tvBottom1.setGravity(Gravity.RIGHT);
 		trBottom.setGravity(Gravity.RIGHT);
 		trBottom.addView(tvBottom1);
@@ -393,11 +395,13 @@ public class Main extends Activity {
 		
 		TextView tvBottom2 = new TextView(this);
 		tvBottom2.setText(Double.toString(dTotalDistance) );
-		tvBottom1.setGravity(Gravity.LEFT);
+		//tvBottom1.setGravity(Gravity.LEFT);
 		trBottom.addView(tvBottom2);
 		
+		
 		tl.addView(trBottom);
-				
+			
+		
 		Log.d("EXAMPLE", "names size - " + names.size());
 	}
 	
@@ -764,7 +768,7 @@ public class Main extends Activity {
 					//String sCumDist= dcumDist.toString();
 					
 					tv.setTextSize(24);
-					tv.setText("Total Trip Mileage: \n" + Util.Meters2Miles(dcumDist));
+					tv.setText("Total Trip Mileage:\n\n" + Util.Meters2Miles(dcumDist));
 
 				}// end isTripActive()
 
