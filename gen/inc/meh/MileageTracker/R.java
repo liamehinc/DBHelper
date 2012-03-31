@@ -59,6 +59,7 @@ public final class R {
     public static final class string {
         public static final int Delete=0x7f050006;
         public static final int Export=0x7f050009;
+        public static final int ExportFileName=0x7f050010;
         public static final int GPSStatus=0x7f050008;
         public static final int Insert=0x7f050002;
         public static final int ManualInsert=0x7f050007;

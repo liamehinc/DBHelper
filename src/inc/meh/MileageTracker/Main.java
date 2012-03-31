@@ -11,12 +11,9 @@ import java.util.Calendar;
 import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
-//import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-//import android.graphics.Color;
-//import android.database.Cursor;
 import android.location.*;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,13 +32,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Main extends Activity {
-//	private static final int DIALOG_CONFIRM_DELETE_ID = 0;
 	private TextView tv;
 	private DAO dh;
 	private LocationManager mLocationManager;
 	public LocationListener mLocationListener;
 	Button buttonStop;
-	Button buttonStart;
+	protected Button buttonStart;
 	Button buttonDelete;
 	Button buttonManualInsert;
 	Button buttonRetrieve;
@@ -52,367 +48,13 @@ public class Main extends Activity {
 	int InsertStringTripId;
 	int iMinTime=3000;
 	int iMinDist=1;
+	
+	//initialize trip and provide context
+	private Trip t;
+	private History h = new History();
 
 	final Criteria criteria = new Criteria();
 	
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.main);
-
-		// initialize the database
-		this.dh = new DAO(Main.this);
-		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-		if (!mLocationManager
-				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
-			Intent myIntent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
-			startActivity(myIntent);
-		}
-
-
-		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		// criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-		criteria.setPowerRequirement(Criteria.POWER_LOW);
-
-		// Delete all rows
-		buttonDelete = (Button) findViewById(R.id.button3);
-		
-		if (!debug)
-			buttonDelete.setVisibility(Button.GONE);
-		
-		buttonDelete.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				tv = (TextView) findViewById(R.id.TextView1);
-
-				dh.deleteAll();
-			}
-		});
-		// Close Delete all rows
-
-		// Start Button activity
-		buttonStart = (Button) findViewById(R.id.btnStart);
-		//buttonStart.setBackgroundColor(Color.GREEN);
-		//buttonStart.setWidth(560);
-		//buttonStart.setHeight(90);
-		
-		buttonStart.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-
-				// Perform action on click
-				tv = (TextView) findViewById(R.id.TextView1);
-
-				String locationprovider = mLocationManager.getBestProvider(
-						criteria, true);
-
-				mLocationManager.requestLocationUpdates(
-						LocationManager.GPS_PROVIDER, iMinTime, iMinDist, mLocationListener);
-				Location mLocation = mLocationManager
-						.getLastKnownLocation(locationprovider);
-
-				// Register the listener with the Location Manager to receive
-				// location updates
-				// mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,50,
-				// 1, mLocationListener);
-
-				if (mLocation != null) {
-					
-					// buttonStart.setClickable(false);
-					
-					//if (buttonStart.getText() == getResources().getString(R.string.Insert)) {
-					if (!isTracking) {
-						StartTrack(mLocation);
-						buttonStart.setBackgroundResource(R.drawable.pressed_button);
-						isTracking=true;
-						}
-					else {
-						StopTrack();
-						buttonStart.setBackgroundResource(R.drawable.nice_button);
-						isTracking=false;
-					}
-					
-					TableLayout tl=(TableLayout) findViewById(R.id.ShowDataTable);
-
-					//empty table to make sure data is not appended for each click of menu
-					tl.removeAllViews();
-					
-					} // if (mLocatoin != null) 
-					else {
-						Toast.makeText(Main.this, getResources().getString(R.string.NoGPS),	Toast.LENGTH_SHORT).show();
-				}
-			}
-
-		});
-		// Close of Start Button Activity
-
-		// Manual Insert
-		buttonManualInsert = (Button) findViewById(R.id.buttonManualInsert);
-
-		if (!debug)
-			buttonManualInsert.setVisibility(Button.GONE);
-		
-		buttonManualInsert.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// Perform action on click
-				//String InsertString;
-
-				// String coordinates = dh.SelectRow("In");
-				String locationprovider = mLocationManager.getBestProvider(criteria, true);
-				Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
-				if (mLocation != null) {
-					String InsertStringInsertype = "Manual";
-					Double InsertStringLat = mLocation.getLatitude();
-					Double InsertStringLon = mLocation.getLongitude();
-					
-					double[] calcedDist = CalculateDistance(InsertStringLat, InsertStringLon);
-					
-					// String InsertString = InsertStringInsertype + ",'" +
-					// InsertStringLat + "','" + InsertStringLon + "','" +
-					// dist2Prev + "'," + cumDist;
-					double dist2Prev = calcedDist[0];
-					double dcumDist = calcedDist[1];
-					
-					//InsertString = InsertStringInsertype + "," + InsertStringLat + "," + InsertStringLon + "," + dist2Prev + "," + dcumDist;
-					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
-					
-					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);
-
-					//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-					
-				} else {
-					Toast.makeText(
-							Main.this,
-							"I can't insert this location because I don't know where you are.",
-							Toast.LENGTH_SHORT).show();
-				}
-
-			}
-
-		});
-		// Close Manual Insert
-
-		// Retrieve1 button
-		buttonRetrieve1 = (Button) findViewById(R.id.button4);
-		
-		if (!debug)
-			buttonRetrieve1.setVisibility(Button.GONE);
-		
-		buttonRetrieve1.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				List<String> OneRow = dh.selectOneRow("");
-				if (OneRow.isEmpty()) {
-					tv.setText("There are no coordinate entries");
-				}
-				else {
-					tv.setText(OneRow.toString());
-				}
-			}
-		});
-
-		// Export button
-		buttonExport = (Button) findViewById(R.id.btnExport);
-		
-		if (!debug)
-			buttonExport.setVisibility(Button.GONE);
-		
-		buttonExport.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				
-				Toast.makeText(Main.this, "Export", Toast.LENGTH_SHORT).show();
-				
-				Intent myIntent = new Intent(v.getContext(), Email.class);
-                startActivityForResult(myIntent, 0);
-
-			}
-		});
-		
-
-		
-		// Stop location updates
-		// buttonStop = (Button) findViewById(R.id.buttonStop1);
-/*		buttonStop.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				buttonStop.setClickable(false);
-				buttonStart.setClickable(true);
-
-				String sStartLat = "";
-				String sStartLong = "";
-
-				String sStopLat = "";
-				String sStopLong = "";
-				//mLocationManager.removeUpdates(mLocationListener);  // try moving this further down in code
-
-				// calculate distance
-				tv.setText("calc this");
-				// get last location in database
-				double[] dLastLocation = getLastLocation();
-
-				// break out lat and long
-				double dStartLat = dLastLocation[0];
-				double dStartLong = dLastLocation[1];
-				float[] results = { 999f };
-
-				String locationprovider = mLocationManager.getBestProvider(criteria, true);
-				Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
-
-				if (mLocation != null) {
-					String InsertStringInsertype = "Stop";
-					Double InsertStringLat = mLocation.getLatitude();
-					Double InsertStringLon = mLocation.getLongitude();
-
-					Double dist2Prev = 0.0;
-					Double cumDist = 0.0;
-
-					// is the db empty?
-					if (dLastLocation != null) {
-						// double dDist2Prev = dLastLocation[2];
-						double dCumDist = dLastLocation[3];
-
-						if (dCumDist != 0) {
-							cumDist = dCumDist;
-						}
-						
-						// float[] results = {999f};
-						// get distance between here and last record in database
-						android.location.Location.distanceBetween(dStartLat,
-								dStartLong, InsertStringLat, InsertStringLon,
-								results);
-
-						double dDist2Prev = results[0];
-
-						dist2Prev = dDist2Prev;
-						cumDist += dDist2Prev;
-						mLocationManager.removeUpdates(mLocationListener);  // moved later in routine to allow for removal of requestLocationupdates
-					}
-					// show me the money!!!
-					android.location.Location.distanceBetween(dStartLat,
-							dStartLong, InsertStringLat, InsertStringLon,
-							results);
-
-					tv.setText("distanceBetween: " + results[0]);
-
-					sStopLat = InsertStringLat.toString();
-					sStopLong = InsertStringLon.toString();
-
-					sStartLat = Double.toString(dStartLat);
-					sStartLong = Double.toString(dStartLong);
-
-					tv.setText("start Lat: " + sStartLat + " start Long: "
-							+ sStartLong + "stop Lat: " + sStopLat
-							+ "stop Long: " + sStopLong);
-					tv.setText("distanceBetween: " + results[0]
-							+ "\n\nstart Lat: " + sStartLat + " start Long: "
-							+ sStartLong + "\nstop Lat: " + sStopLat
-							+ "stop Long: " + sStopLong);
-
-					String InsertString = InsertStringInsertype + ",'"
-							+ InsertStringLat + "','" + InsertStringLon + "','";
-
-					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
-							.show();
-					dh.insert(InsertStringInsertype, InsertStringLat,
-							InsertStringLon, dist2Prev, cumDist);
-
-				} else {
-					Toast.makeText(Main.this, "turn on your GPS lame-o",
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
-		// Close of buttonStop.setOnClickListener
-	//	buttonStop.setClickable(false);
-*/
-		// Retrieve button activity
-		buttonRetrieve = (Button) findViewById(R.id.button2);
-		
-		if (!debug)
-			buttonRetrieve.setVisibility(Button.GONE);
-		
-		buttonRetrieve.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				// Perform action on click
-				tv = (TextView) findViewById(R.id.TextView1);
-
-				List<String> names = dh.selectAll("coordinateid");
-				StringBuilder sb = new StringBuilder();
-				sb.append("Coordinates in database:\n");
-				for (String name : names) {
-					sb.append(name + ", ");
-					// sb.append("\n");
-				}
-
-				Log.d("EXAMPLE", "names size - " + names.size());
-				tv.setText(sb.toString());
-			}
-		});
-		// Close Retrieve button activity
-
-		// Define a listener that responds to location updates
-		// i.e. auto update
-		mLocationListener = new LocationListener() {
-			public void onLocationChanged(Location mlocation) {
-				// Called when a new location is found by the network location
-				// provider.
-
-				// make sure there is an active trip b4 logging to db
-
-				if (isTracking) {
-
-					String InsertStringInsertype = "Auto";
-					Double InsertStringLat = mlocation.getLatitude();
-					Double InsertStringLon = mlocation.getLongitude();
-
-					double[] calcedDist = CalculateDistance(InsertStringLat, InsertStringLon);
-					
-					// String InsertString = InsertStringInsertype + ",'" +
-					// InsertStringLat + "','" + InsertStringLon + "','" +
-					// dist2Prev + "'," + cumDist;
-					double dist2Prev = calcedDist[0];
-					double dcumDist = calcedDist[1];
-					
-					//String InsertString = InsertStringInsertype + ","
-					//		+ InsertStringLat + "," + InsertStringLon + ","
-					//		+ dist2Prev + "," + dcumDist;
-					
-					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
-					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,
-							dist2Prev, dcumDist);
-					
-					//String sCumDist= dcumDist.toString();
-					
-					tv.setTextSize(24);
-					tv.setText("Total Trip Mileage: \n" + Util.Meters2Miles(dcumDist));
-
-				}// end isTripActive()
-
-			}
-
-			public void onStatusChanged(String provider, int status,
-					Bundle extras) {
-			}
-
-			public void onProviderEnabled(String provider) {
-			}
-
-			public void onProviderDisabled(String provider) {
-			}
-
-		};
-		// Register the listener with the Location Manager to receive location
-		// updates
-//		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-	//			0, 0, mLocationListener);
-
-	}   // Close onCreate
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -574,49 +216,20 @@ public class Main extends Activity {
 		}
 	}
 	
-	
-		
-	/*
-	protected Dialog onCreateDialog(int id) {
-	    Dialog dialog = null;
-	    switch(id) {
-	    case 0:
-	        // Confirm delete all data
-	    	
-
-    		
-	    	
-	    	
-	        break;
-	    default:
-	        dialog = null;
-	    }
-	    return dialog;
-	}
-
-	*/
-	
-
-	
 	private void ExportData()
 	{
 		
-		//String columnString =   "\"PersonName\",\"Gender\",\"Street1\",\"postOffice\",\"Age\"";
-    	//String dataString   =   "currentUser,userName,gender,currentUser.street1,currentUser.postOFfice,currentUser.age";
-    	
-    	//String columnString ="Insertype, Latitude, Longitude, Distance To Previous, Cumulative Distance, Date Created";  
-		
 		String columnString ="Trip Number, Date Created, Distance Travelled ";
-    	
     	String combinedString = columnString + "\n"; //+ dataString;
 
+    	//Call DB via DAO
     	List<String> names = dh.getTripInfo("tripid");
-    	
-    	
+
 		StringBuilder sb = new StringBuilder();
 		
 		int i = 0;
 		
+		//iterate through results and build csv
 		for (String name : names) {
 			 
 			sb.append(name + ", ");
@@ -637,7 +250,7 @@ public class Main extends Activity {
     	if (root.canWrite()){
     	    File dir    =   new File (root.getAbsolutePath() + "/PersonData");
     	     dir.mkdirs();
-    	     file   =   new File(dir, "mileage.csv");
+    	     file   =   new File(dir, getResources().getString(R.string.ExportFileName));
     	     FileOutputStream out   =   null;
     	    try {
     	        out = new FileOutputStream(file);
@@ -656,10 +269,12 @@ public class Main extends Activity {
     	        }
     	    }
 
+    	//get local .csv file
     	Uri u1  =   null;
     	
     	u1  =   Uri.fromFile(file);
 
+    	//build email
     	Intent sendIntent = new Intent(Intent.ACTION_SEND);
     	sendIntent.putExtra(Intent.EXTRA_SUBJECT, "MileageTracker Export");
     	
@@ -672,35 +287,18 @@ public class Main extends Activity {
     	sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
     	sendIntent.setType("text/html");
 
-    	//startActivity(sendIntent);
-/*
-                  final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-           
-          //        emailIntent.setType("plain/text");
-             
-                  emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, "");
-           
-                  emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "MileageTracker Export");
-           
-                  //emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, emailtext.getText());
-                  
-                  //emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, emailtext.getText());
-   
-        //        Email.this.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-        
-        */
-                  this.startActivity(Intent.createChooser(sendIntent, "Send mail..."));
-
+    	this.startActivity(Intent.createChooser(sendIntent, "Send mail..."));
 
 	}
-	
 
-
+	//Show Table of Trips on Screen
 	private void ShowAllData()
 	{
 
+		//Column names
 		String[] columns ={"Trip ", "Date Created ", "Distance Travelled "};
 
+		//build TableLayout
 		TableLayout tl=(TableLayout) findViewById(R.id.ShowDataTable);
 
 		//empty table to make sure data is not appended for each click of menu
@@ -723,6 +321,7 @@ public class Main extends Activity {
 
 		trc.setLayoutParams(tableRowParams);
 		
+		//Build Columns
 		for (String col : columns) {
 			TextView tvc = new TextView(this);
 			tvc.setText(col);
@@ -734,8 +333,10 @@ public class Main extends Activity {
 		int i = 0;
 		double dTotalDistance=0;
 
+		//Get Trips from DAO
     	List<String> names = dh.getTripInfo("tripid");
 		
+    	//iterate through trips and display in 3 column format
 		for (int row=0; row < (names.size()/3); row++) {
 
 			TableRow tr=new TableRow(this);
@@ -758,6 +359,7 @@ public class Main extends Activity {
 		tl.addView(tr);
 		}
 		
+		//Bottom Row for Total Mileage
 		TableRow trBottom=new TableRow(this);
 		
 		int leftMarginB=1;
@@ -788,6 +390,7 @@ public class Main extends Activity {
 		Log.d("EXAMPLE", "names size - " + names.size());
 	}
 	
+	//method for removing all data from DB and clearing table from screen
 	private void TruncateData()
 	{
 		dh.deleteAll();
@@ -842,17 +445,6 @@ public class Main extends Activity {
 		String sStartLong = "";
 		List<String> dbRow = dh.selectOneRow("");
 
-		/*
-		 * StringBuilder sb = new StringBuilder(); for (String name : names) {
-		 * sb.append(name + ", "); }
-		 * 
-		 * String sFromDB=sb.toString();
-		 * 
-		 * String[] sFromDBArray=sFromDB.split(",");
-		 */
-
-		// String[] sFromDBArray=(String[]) dbRow.toArray();
-		
 		sStartLat = dbRow.get(1);// sFromDBArray[1];
 		sStartLong = dbRow.get(2);// sFromDBArray[2];
 
@@ -872,41 +464,291 @@ public class Main extends Activity {
 		return dReturn;
 
 	}
-	
-	private void StartTrack(Location mLocation) {
-		buttonStart.setText(getResources().getString(R.string.Stop));
-		InsertStringTripId = dh.getTripId();
-		String InsertStringInsertype = "Start";
-		Double InsertStringLat = mLocation.getLatitude();
-		Double InsertStringLon = mLocation.getLongitude();
 
-		//String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','";
-
-		//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-		
-		dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
-				InsertStringLon, 0.0, 0.0);
-
-		//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-	}
 	
-	
-	
+	//Method to stop tracking trip
 	private void StopTrack() {
-		//if (buttonStart.getText() == getResources().getString(R.string.Stop)) {
-			buttonStart.setText(getResources().getString(R.string.Insert));
-			String InsertStringInsertype = "Stop";
+		
+		//change button text
+		buttonStart.setText(getResources().getString(R.string.Insert));
+		
+		//this is a "stop" activity (not "auto" or "start")
+		String InsertStringInsertype = "Stop";
+
+		// get last location in database
+		double[] dLastLocation = getLastLocation();
+
+		// break out lat and long
+		double dStartLat = dLastLocation[0];
+		double dStartLong = dLastLocation[1];
+	
+		//initialize final results (returned as float)
+		float[] results = { 999f };
+
+		//get best location provider
+		String locationprovider = mLocationManager.getBestProvider(criteria, true);
+		
+		//get last known location
+		Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
+
+		//is location known?
+		if (mLocation != null) {
 			
-			/*
+			InsertStringInsertype = "Stop";
+			
+			//get lat and long
+			Double InsertStringLat = mLocation.getLatitude();
+			Double InsertStringLon = mLocation.getLongitude();
+
+			Double dist2Prev = 0.0;
+			Double cumDist = 0.0;
+
+			// is the db empty?
+			if (dLastLocation != null) {
+
+				//get cumulative distance
+				double dCumDist = dLastLocation[3];
+
+				if (dCumDist != 0) {
+					cumDist = dCumDist;
+				}
+				
+				// get distance between here and last record in database
+				android.location.Location.distanceBetween(dStartLat,
+						dStartLong, InsertStringLat, InsertStringLon,
+						results);
+
+				//the distance to the previous location/breadcrumb
+				double dDist2Prev = results[0];
+
+				dist2Prev = dDist2Prev;
+				
+				//increment cumulative distance with distance to previous
+				cumDist += dDist2Prev;
+				
+				mLocationManager.removeUpdates(mLocationListener);  // moved later in routine to allow for removal of requestLocationupdates
+			}
+			
+			
+			// show me the money!!!
+			android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
+
+			// convert the distance numbers to miles rather then the default meters.
+			// display to screen (i.e. odometer)
+			tv.setText("Trip # " + InsertStringTripId + "\nTrip Distance: " + Util.Meters2Miles(cumDist));
+			
+			//write to DAO
+			dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
+					InsertStringLon, dist2Prev, cumDist);
+
+		} else {
+			//GPS is not working
+			Toast.makeText(Main.this, getResources().getString(R.string.NoGPS),
+					Toast.LENGTH_SHORT).show();
+		}
+	}
+		
+
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.main);
+
+		// initialize the database
+		this.dh = new DAO(Main.this);
+		
+		//initialize Trip object and pass Context
+		this.t = new Trip(Main.this);
+		
+		//initialize LocationManager
+		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		if (!mLocationManager
+				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+			Intent myIntent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+			startActivity(myIntent);
+		}
+
+
+		//criteria settings
+		criteria.setAccuracy(Criteria.ACCURACY_FINE);
+		// criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+		criteria.setPowerRequirement(Criteria.POWER_LOW);
+
+		// debug button to delete all rows
+		buttonDelete = (Button) findViewById(R.id.button3);
+		
+		if (!debug)
+			buttonDelete.setVisibility(Button.GONE);
+		
+		buttonDelete.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				tv = (TextView) findViewById(R.id.TextView1);
+
+				dh.deleteAll();
+			}
+		});
+		// Close Delete all rows
+
+		// ****************Start Button activity
+		buttonStart = (Button) findViewById(R.id.btnStart);
+		//buttonStart.setBackgroundColor(Color.GREEN);
+		//buttonStart.setWidth(560);
+		//buttonStart.setHeight(90);
+		
+		buttonStart.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+
+				// Perform action on click
+				tv = (TextView) findViewById(R.id.TextView1);
+
+				String locationprovider = mLocationManager.getBestProvider(
+						criteria, true);
+
+				mLocationManager.requestLocationUpdates(
+						LocationManager.GPS_PROVIDER, iMinTime, iMinDist, mLocationListener);
+				Location mLocation = mLocationManager
+						.getLastKnownLocation(locationprovider);
+
+				//turn on your GPS, Lame-o
+				if (mLocation != null)
+				{
+					
+					//toggle based on tracking
+					if (!isTracking) 
+					{
+						t.StartTrack(mLocation);
+						
+						//change button text
+						buttonStart.setText(getResources().getString(R.string.Stop));
+
+						buttonStart.setBackgroundResource(R.drawable.pressed_button);
+						isTracking=true;
+					}
+					else
+					{
+						StopTrack();
+						buttonStart.setBackgroundResource(R.drawable.nice_button);
+						isTracking=false;
+					}
+					
+					//empty table to make sure data is not appended for each click of menu
+					TableLayout tl=(TableLayout) findViewById(R.id.ShowDataTable);
+					tl.removeAllViews();
+					
+				}
+				else  //prompt to enable GPS 
+				{
+					Toast.makeText(Main.this, getResources().getString(R.string.NoGPS),	Toast.LENGTH_SHORT).show();
+				}
+			}
+
+		});
+		// Close of Start Button Activity
+
+		// Debug button for Manual Insert
+		buttonManualInsert = (Button) findViewById(R.id.buttonManualInsert);
+
+		if (!debug)
+			buttonManualInsert.setVisibility(Button.GONE);
+		
+		buttonManualInsert.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Perform action on click
+				//String InsertString;
+
+				// String coordinates = dh.SelectRow("In");
+				String locationprovider = mLocationManager.getBestProvider(criteria, true);
+				Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
+				if (mLocation != null) {
+					String InsertStringInsertype = "Manual";
+					Double InsertStringLat = mLocation.getLatitude();
+					Double InsertStringLon = mLocation.getLongitude();
+					
+					double[] calcedDist = CalculateDistance(InsertStringLat, InsertStringLon);
+					
+					// String InsertString = InsertStringInsertype + ",'" +
+					// InsertStringLat + "','" + InsertStringLon + "','" +
+					// dist2Prev + "'," + cumDist;
+					double dist2Prev = calcedDist[0];
+					double dcumDist = calcedDist[1];
+					
+					//InsertString = InsertStringInsertype + "," + InsertStringLat + "," + InsertStringLon + "," + dist2Prev + "," + dcumDist;
+					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
+					
+					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);
+
+					//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+					
+				} else {
+					Toast.makeText(
+							Main.this,
+							"I can't insert this location because I don't know where you are.",
+							Toast.LENGTH_SHORT).show();
+				}
+
+			}
+
+		});
+		// Close Manual Insert
+
+		// Debug button for Retrieve1 button
+		buttonRetrieve1 = (Button) findViewById(R.id.button4);
+		
+		if (!debug)
+			buttonRetrieve1.setVisibility(Button.GONE);
+		
+		buttonRetrieve1.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				List<String> OneRow = dh.selectOneRow("");
+				if (OneRow.isEmpty()) {
+					tv.setText("There are no coordinate entries");
+				}
+				else {
+					tv.setText(OneRow.toString());
+				}
+			}
+		});
+
+		//Debug -- Export button
+		buttonExport = (Button) findViewById(R.id.btnExport);
+		
+		if (!debug)
+			buttonExport.setVisibility(Button.GONE);
+		
+		buttonExport.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				Toast.makeText(Main.this, "Export", Toast.LENGTH_SHORT).show();
+				
+				Intent myIntent = new Intent(v.getContext(), Email.class);
+                startActivityForResult(myIntent, 0);
+
+			}
+		});
+		
+
+		
+		// Stop location updates
+		// buttonStop = (Button) findViewById(R.id.buttonStop1);
+/*		buttonStop.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				buttonStop.setClickable(false);
+				buttonStart.setClickable(true);
+
 				String sStartLat = "";
 				String sStartLong = "";
 
 				String sStopLat = "";
 				String sStopLong = "";
-				
-				*/
-				
-				
 				//mLocationManager.removeUpdates(mLocationListener);  // try moving this further down in code
 
 				// calculate distance
@@ -923,7 +765,7 @@ public class Main extends Activity {
 				Location mLocation = mLocationManager.getLastKnownLocation(locationprovider);
 
 				if (mLocation != null) {
-					InsertStringInsertype = "Stop";
+					String InsertStringInsertype = "Stop";
 					Double InsertStringLat = mLocation.getLatitude();
 					Double InsertStringLon = mLocation.getLongitude();
 
@@ -952,30 +794,32 @@ public class Main extends Activity {
 						mLocationManager.removeUpdates(mLocationListener);  // moved later in routine to allow for removal of requestLocationupdates
 					}
 					// show me the money!!!
-					android.location.Location.distanceBetween(dStartLat, dStartLong, InsertStringLat, InsertStringLon, results);
+					android.location.Location.distanceBetween(dStartLat,
+							dStartLong, InsertStringLat, InsertStringLon,
+							results);
 
-					/*
+					tv.setText("distanceBetween: " + results[0]);
+
 					sStopLat = InsertStringLat.toString();
 					sStopLong = InsertStringLon.toString();
 
 					sStartLat = Double.toString(dStartLat);
 					sStartLong = Double.toString(dStartLong);
-					*/
 
-					// convert the distance numbers to miles rather then the default meters.
-					tv.setText("Trip # " + InsertStringTripId + "\nTrip Distance: " + Util.Meters2Miles(cumDist));
-					
-					/* + " \n\tdistanceBetween: " + results[0] / 1609.344
+					tv.setText("start Lat: " + sStartLat + " start Long: "
+							+ sStartLong + "stop Lat: " + sStopLat
+							+ "stop Long: " + sStopLong);
+					tv.setText("distanceBetween: " + results[0]
 							+ "\n\nstart Lat: " + sStartLat + " start Long: "
 							+ sStartLong + "\nstop Lat: " + sStopLat
 							+ "stop Long: " + sStopLong);
-							*/
 
-					//String InsertString = InsertStringInsertype + ",'" + InsertStringLat + "','" + InsertStringLon + "','";
+					String InsertString = InsertStringInsertype + ",'"
+							+ InsertStringLat + "','" + InsertStringLon + "','";
 
-					//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-					
-					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
+					Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT)
+							.show();
+					dh.insert(InsertStringInsertype, InsertStringLat,
 							InsertStringLon, dist2Prev, cumDist);
 
 				} else {
@@ -983,8 +827,97 @@ public class Main extends Activity {
 							Toast.LENGTH_SHORT).show();
 				}
 			}
-		
+		});
 		// Close of buttonStop.setOnClickListener
 	//	buttonStop.setClickable(false);
-	//}
+*/
+		// Debug -- Retrieve button activity
+		buttonRetrieve = (Button) findViewById(R.id.button2);
+		
+		if (!debug)
+			buttonRetrieve.setVisibility(Button.GONE);
+		
+		buttonRetrieve.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				// Perform action on click
+				tv = (TextView) findViewById(R.id.TextView1);
+
+				List<String> names = dh.selectAll("coordinateid");
+				StringBuilder sb = new StringBuilder();
+				sb.append("Coordinates in database:\n");
+				for (String name : names) {
+					sb.append(name + ", ");
+					// sb.append("\n");
+				}
+
+				Log.d("EXAMPLE", "names size - " + names.size());
+				tv.setText(sb.toString());
+			}
+		});
+		// Close Retrieve button activity
+
+		// Define a listener that responds to location updates
+		// i.e. auto update
+		mLocationListener = new LocationListener() {
+			public void onLocationChanged(Location mlocation) {
+				// Called when a new location is found by the network location
+				// provider.
+
+				// make sure there is an active trip b4 logging to db
+
+				if (isTracking) {
+
+					String InsertStringInsertype = "Auto";
+					Double InsertStringLat = mlocation.getLatitude();
+					Double InsertStringLon = mlocation.getLongitude();
+
+					double[] calcedDist = CalculateDistance(InsertStringLat, InsertStringLon);
+					
+					// String InsertString = InsertStringInsertype + ",'" +
+					// InsertStringLat + "','" + InsertStringLon + "','" +
+					// dist2Prev + "'," + cumDist;
+					double dist2Prev = calcedDist[0];
+					double dcumDist = calcedDist[1];
+					
+					//String InsertString = InsertStringInsertype + ","
+					//		+ InsertStringLat + "," + InsertStringLon + ","
+					//		+ dist2Prev + "," + dcumDist;
+					
+					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
+					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
+					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,
+							dist2Prev, dcumDist);
+					
+					//String sCumDist= dcumDist.toString();
+					
+					tv.setTextSize(24);
+					tv.setText("Total Trip Mileage: \n" + Util.Meters2Miles(dcumDist));
+
+				}// end isTripActive()
+
+			}
+
+			public void onStatusChanged(String provider, int status,
+					Bundle extras) {
+			}
+
+			public void onProviderEnabled(String provider) {
+			}
+
+			public void onProviderDisabled(String provider) {
+			}
+
+		};
+		// Register the listener with the Location Manager to receive location
+		// updates
+//		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+	//			0, 0, mLocationListener);
+
+	}   // Close onCreate
+
+
+
+
+
+
 }
