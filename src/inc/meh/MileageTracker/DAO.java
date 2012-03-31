@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteStatement;
 //import android.net.ParseException;
 import android.util.Log;  
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList; 
 import java.util.Date;
@@ -16,6 +18,9 @@ import java.util.TimeZone;
 
 
 public class DAO {      
+
+	NumberFormat nfm = new DecimalFormat("#0.000000000");
+
 	private static final String DATABASE_NAME = "trips.db";    
 	private static final int DATABASE_VERSION = 11;    
 	private static final String TABLE_NAME = "coordinates";      
@@ -100,7 +105,9 @@ public class DAO {
 
 				lTripInfo.add( UTC2Local(cursor.getString(1)) );
 				
-				lTripInfo.add(Double.toString(Util.Meters2Miles(cursor.getDouble(2))));
+				//convert to miles
+				//reduce to 9 decimal places to remove exponential notation
+				lTripInfo.add(nfm.format(Util.Meters2Miles(cursor.getDouble(2))));
 				}
 			while (cursor.moveToNext());
 		}

@@ -52,7 +52,7 @@ public class Main extends Activity {
 	int iMinTime=3000;
 	int iMinDist=1;
 	NumberFormat nf = new DecimalFormat("#0.00");
-	NumberFormat nfm = new DecimalFormat("#0.0000000");
+	NumberFormat nfm = new DecimalFormat("#0.000000000");
 	
 	//initialize trip and provide context
 	private Trip t;
