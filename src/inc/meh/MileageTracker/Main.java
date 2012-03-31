@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -219,7 +220,7 @@ public class Main extends Activity {
 	private void ExportData()
 	{
 		
-		String columnString ="Trip Number, Date Created, Distance Travelled ";
+		String columnString ="Trip Number, Date Created, Distance Travelled (miles) ";
     	String combinedString = columnString + "\n"; //+ dataString;
 
     	//Call DB via DAO
@@ -296,7 +297,7 @@ public class Main extends Activity {
 	{
 
 		//Column names
-		String[] columns ={"Trip ", "Date Created ", "Distance Travelled "};
+		String[] columns ={"Trip ", "Date Created ", "Distance Travelled (miles) "};
 
 		//build TableLayout
 		TableLayout tl=(TableLayout) findViewById(R.id.ShowDataTable);
@@ -362,27 +363,37 @@ public class Main extends Activity {
 		//Bottom Row for Total Mileage
 		TableRow trBottom=new TableRow(this);
 		
-		int leftMarginB=1;
-		int topMarginB=7;
-		int rightMarginB=1;
-		int bottomMarginB=1;
+		int leftMarginB=0;
+		int topMarginB=10;
+		int rightMarginB=0;
+		int bottomMarginB=0;
 
 		TableLayout.LayoutParams tableRowParamsB=
 			  new TableLayout.LayoutParams
-			  (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
+			  (TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.MATCH_PARENT);
 
 		
 		tableRowParamsB.setMargins(leftMarginB, topMarginB, rightMarginB, bottomMarginB);
 
 		trBottom.setLayoutParams(tableRowParamsB);
 
+		TextView tvBottom0 = new TextView(this);
+		
+		tvBottom0.setText("");
+		trBottom.addView(tvBottom0);
+		
+		
 		TextView tvBottom1 = new TextView(this);
 		
-		tvBottom1.setText("Total: ");
+		tvBottom1.setText("Total (miles):");
+		tvBottom1.setGravity(Gravity.RIGHT);
+		trBottom.setGravity(Gravity.RIGHT);
 		trBottom.addView(tvBottom1);
 		
+		
 		TextView tvBottom2 = new TextView(this);
-		tvBottom2.setText(Double.toString(dTotalDistance));
+		tvBottom2.setText(Double.toString(dTotalDistance) );
+		tvBottom1.setGravity(Gravity.LEFT);
 		trBottom.addView(tvBottom2);
 		
 		tl.addView(trBottom);

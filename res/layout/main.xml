@@ -65,9 +65,10 @@ android:text="" />
     android:id="@+id/ShowDataTable"
     android:paddingTop="10dp"
     android:paddingBottom="15dp">
+    </TableLayout>
     
-          </TableLayout>
 
+        
 </LinearLayout> 
 </ScrollView>
 
