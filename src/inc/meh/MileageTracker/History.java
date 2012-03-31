@@ -13,11 +13,11 @@ public class History {
 		
 	}
 	
-	protected void show() {
+	protected void getHistoryForScreenDisplay() {
 		
 	}
 
-	protected void getHistory() {
+	protected void getHistoryForExport() {
 		
 	}
 }
