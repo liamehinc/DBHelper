@@ -767,8 +767,21 @@ public class Main extends Activity {
 					
 					//String sCumDist= dcumDist.toString();
 					
+					String sMessage ="Total Trip Mileage:\n\n" + Util.Meters2Miles(dcumDist)+"\n" ;
+					
+					if (mlocation.hasSpeed())
+						sMessage+= "\n\nSpeed: " + (mlocation.getSpeed()*2.23693629) +" mph";
+					
+					if (mlocation.hasAltitude())
+						sMessage+= "\n\nAltitude: " + (mlocation.getAltitude()*3.2808399) +" feet " ;
+					
+					if (mlocation.hasBearing())
+						sMessage+="\n\nBearing: " + mlocation.getBearing() + " degrees ";
+					
+					
+					
 					tv.setTextSize(24);
-					tv.setText("Total Trip Mileage:\n\n" + Util.Meters2Miles(dcumDist));
+					tv.setText(sMessage);
 
 				}// end isTripActive()
 
