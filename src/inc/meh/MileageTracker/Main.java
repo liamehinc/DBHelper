@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -49,6 +51,8 @@ public class Main extends Activity {
 	int InsertStringTripId;
 	int iMinTime=3000;
 	int iMinDist=1;
+	NumberFormat nf = new DecimalFormat("#0.00");
+	NumberFormat nfm = new DecimalFormat("#0.0000000");
 	
 	//initialize trip and provide context
 	private Trip t;
@@ -502,7 +506,7 @@ public class Main extends Activity {
 							// convert the distance numbers to miles rather then the default meters.
 							// display to screen (i.e. odometer)
 
-							tv.setText("Trip # " + t.getTripId() + "\nTrip Distance: " + Util.Meters2Miles(t.getCumulativeTripDistance()));
+							tv.setText("Last Completed Trip # " + t.getTripId() + "\nTrip Distance: " + nfm.format(Util.Meters2Miles(t.getCumulativeTripDistance())));
 
 							
 						//change button text
@@ -767,16 +771,16 @@ public class Main extends Activity {
 					
 					//String sCumDist= dcumDist.toString();
 					
-					String sMessage ="Total Trip Mileage:\n\n" + Util.Meters2Miles(dcumDist)+"\n" ;
+					String sMessage ="Total Trip Mileage:\n\n" + nfm.format(Util.Meters2Miles(dcumDist))+"\n" ;
 					
 					if (mlocation.hasSpeed())
-						sMessage+= "\n\nSpeed: " + Util.roundDecimals(mlocation.getSpeed()*2.23693629,2) +" mph";
+						sMessage+= "\n\nSpeed: " + nf.format(mlocation.getSpeed()*2.23693629) +" mph";
 					
 					if (mlocation.hasAltitude())
-						sMessage+= "\n\nAltitude: " + Util.roundDecimals(mlocation.getAltitude()*3.2808399,2) +" feet " ;
+						sMessage+= "\n\nAltitude: " + nf.format(mlocation.getAltitude()*3.2808399) +" feet " ;
 					
 					if (mlocation.hasBearing())
-						sMessage+="\n\nBearing: " + Util.roundDecimals(mlocation.getBearing(),2) + " degrees ";
+						sMessage+="\n\nBearing: " + nf.format(mlocation.getBearing()) + " degrees ";
 					
 					
 					

@@ -1,15 +1,20 @@
 package inc.meh.MileageTracker;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class Util {
 
 	public static double Meters2Miles(double dInput)
 	{
 		double dOutput=0;
-		
-		if (dInput!=0)
+
+		if (dInput!=0){
 			dOutput= dInput / 1609.344;
+			//dOutput = Util.roundDecimals(dOutput, 5);
+			
+			
+		}
 		
 		return dOutput;
 	}
@@ -44,9 +49,13 @@ public class Util {
 			sFormat="#.###";
 		case 4:
 			sFormat="#.####";
+		case 5:
+			sFormat="#.#####";
+		default:
+			sFormat="#.####";
 		}
         
-		DecimalFormat twoDForm = new DecimalFormat(sFormat);
-       	return Double.valueOf(twoDForm.format(d));
+		DecimalFormat df = new DecimalFormat(sFormat);
+       	return Double.valueOf(df.format(d));
 	}
 }
