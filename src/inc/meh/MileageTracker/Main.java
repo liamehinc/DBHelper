@@ -770,13 +770,13 @@ public class Main extends Activity {
 					String sMessage ="Total Trip Mileage:\n\n" + Util.Meters2Miles(dcumDist)+"\n" ;
 					
 					if (mlocation.hasSpeed())
-						sMessage+= "\n\nSpeed: " + (mlocation.getSpeed()*2.23693629) +" mph";
+						sMessage+= "\n\nSpeed: " + Util.roundDecimals(mlocation.getSpeed()*2.23693629,2) +" mph";
 					
 					if (mlocation.hasAltitude())
-						sMessage+= "\n\nAltitude: " + (mlocation.getAltitude()*3.2808399) +" feet " ;
+						sMessage+= "\n\nAltitude: " + Util.roundDecimals(mlocation.getAltitude()*3.2808399,2) +" feet " ;
 					
 					if (mlocation.hasBearing())
-						sMessage+="\n\nBearing: " + mlocation.getBearing() + " degrees ";
+						sMessage+="\n\nBearing: " + Util.roundDecimals(mlocation.getBearing(),2) + " degrees ";
 					
 					
 					
