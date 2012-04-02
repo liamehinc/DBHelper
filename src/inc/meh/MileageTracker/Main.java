@@ -506,7 +506,7 @@ public class Main extends Activity {
 							// convert the distance numbers to miles rather then the default meters.
 							// display to screen (i.e. odometer)
 
-							tv.setText("Last Completed Trip # " + t.getTripId() + "\nTrip Distance: " + nfm.format(Util.Meters2Miles(t.getCumulativeTripDistance())));
+							tv.setText("Last Trip Completed: #" + t.getTripId() + "\nTrip Distance: " + nfm.format(Util.Meters2Miles(t.getCumulativeTripDistance())));
 
 							
 						//change button text
