@@ -33,9 +33,9 @@ public class Trip {
 	
 	
 	public int getTripId() {
-		//return InsertStringTripId;
-		int InsertStringTripID = dh.getTripId();
-		return InsertStringTripID;
+		return InsertStringTripId;
+		//int InsertStringTripID = dh.getTripId();
+		//return InsertStringTripID;
 		
 	}
 	public void setInsertStringTripId(int insertStringTripId) {
