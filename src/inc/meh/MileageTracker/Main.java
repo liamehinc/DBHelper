@@ -398,7 +398,7 @@ public class Main extends Activity {
 		
 		
 		TextView tvBottom2 = new TextView(this);
-		tvBottom2.setText(Double.toString(dTotalDistance) );
+		tvBottom2.setText(nfm.format(dTotalDistance) );
 		//tvBottom1.setGravity(Gravity.LEFT);
 		trBottom.addView(tvBottom2);
 		
