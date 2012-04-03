@@ -56,7 +56,7 @@ public class Main extends Activity {
 	
 	//initialize trip and provide context
 	private Trip t;
-	//private History h = new History();
+	private History h;
 
 	final Criteria criteria = new Criteria();
 	
@@ -228,7 +228,8 @@ public class Main extends Activity {
     	String combinedString = columnString + "\n"; //+ dataString;
 
     	//Call DB via DAO
-    	List<String> names = dh.getTripInfo("tripid");
+    	//List<String> names = dh.getTripInfo("tripid");
+    	List<String> names = h.getCompleteHistory();
 
 		StringBuilder sb = new StringBuilder();
 		
@@ -338,8 +339,8 @@ public class Main extends Activity {
 		int i = 0;
 		double dTotalDistance=0;
 
-		//Get Trips from DAO
-    	List<String> names = dh.getTripInfo("tripid");
+		//Get Trips from history object
+    	List<String> names = h.getCompleteHistory();
 		
     	//iterate through trips and display in 3 column format
 		for (int row=0; row < (names.size()/3); row++) {
@@ -412,7 +413,7 @@ public class Main extends Activity {
 	//method for removing all data from DB and clearing table from screen
 	private void TruncateData()
 	{
-		dh.deleteAll();
+		h.eraseAll();
 		ShowAllData();
 	}
 	
@@ -431,6 +432,11 @@ public class Main extends Activity {
 		
 		//initialize Trip object and pass Context
 		this.t = new Trip(Main.this);
+		
+		//initialize History object and pass Context
+		this.h = new History(Main.this);
+		
+		
 		
 		//initialize LocationManager
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -780,8 +786,14 @@ public class Main extends Activity {
 						sMessage+= "\n\nAltitude: " + nf.format(mlocation.getAltitude()*3.2808399) +" feet " ;
 					
 					if (mlocation.hasBearing())
-						sMessage+="\n\nBearing: " + nf.format(mlocation.getBearing()) + " degrees ";
+					{
 					
+						String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
+						//
+						sMessage += "\n\nBearing: " + directions[ (int)Math.round((  ((double)mlocation.getBearing() % 360) / 45)) ];
+						
+						sMessage += " (" + nf.format(mlocation.getBearing()) + " degrees )";
+					}
 					
 					
 					tv.setTextSize(24);
