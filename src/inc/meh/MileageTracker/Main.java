@@ -148,7 +148,7 @@ public class Main extends Activity {
 		{
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("Are you sure you want to exit while a trip is running?\n\nTo use other applications, please use the Home button.  You can still track but the accuracy will be reduced when running in the background.")
+			builder.setMessage("Are you sure you want to exit while a trip is running?\n\nTo use other applications, please use the Home button.  You can still track when running in the background.")
 			       .setCancelable(false)
 			       .setTitle("Confirm Exit")
 			       .setPositiveButton("Exit and Stop Trip", new DialogInterface.OnClickListener() {
