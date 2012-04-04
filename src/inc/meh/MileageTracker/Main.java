@@ -298,6 +298,29 @@ public class Main extends Activity {
 	}
 
 	//Show Table of Trips on Screen
+	private String ShowExtras(Location mlocation)
+	{
+		String sMessage="";
+		if (mlocation.hasSpeed())
+			sMessage+= "\n\nSpeed: " + nf.format(mlocation.getSpeed()*2.23693629) +" mph";
+		
+		if (mlocation.hasAltitude())
+			sMessage+= "\n\nAltitude: " + nf.format(mlocation.getAltitude()*3.2808399) +" feet " ;
+		
+		if (mlocation.hasBearing())
+		{
+		
+			String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
+			//
+			sMessage += "\n\nBearing: " + directions[ (int)Math.round((  ((double)mlocation.getBearing() % 360) / 45)) ];
+			
+			sMessage += " (" + nf.format(mlocation.getBearing()) + " degrees )";
+		}
+		
+		return sMessage;
+	}
+	
+	//Show Table of Trips on Screen
 	@SuppressWarnings("deprecation")
 	private void ShowAllData()
 	{
@@ -497,6 +520,7 @@ public class Main extends Activity {
 					//toggle based on tracking
 					if (!isTracking) 
 					{
+						
 						t.StartTrack(mLocation);
 						
 						//change button text
@@ -504,6 +528,15 @@ public class Main extends Activity {
 
 						buttonStart.setBackgroundResource(R.drawable.pressed_button);
 						isTracking=true;
+						
+						String sMessage ="Total Trip Mileage:\n\n 0.00 \n" ;
+						
+						sMessage += ShowExtras(mLocation);
+						
+						tv.setTextSize(24);
+						tv.setText(sMessage);
+
+						
 					}
 					else
 					{
@@ -780,22 +813,7 @@ public class Main extends Activity {
 					
 					String sMessage ="Total Trip Mileage:\n\n" + nfm.format(Util.Meters2Miles(dcumDist))+"\n" ;
 					
-					if (mlocation.hasSpeed())
-						sMessage+= "\n\nSpeed: " + nf.format(mlocation.getSpeed()*2.23693629) +" mph";
-					
-					if (mlocation.hasAltitude())
-						sMessage+= "\n\nAltitude: " + nf.format(mlocation.getAltitude()*3.2808399) +" feet " ;
-					
-					if (mlocation.hasBearing())
-					{
-					
-						String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
-						//
-						sMessage += "\n\nBearing: " + directions[ (int)Math.round((  ((double)mlocation.getBearing() % 360) / 45)) ];
-						
-						sMessage += " (" + nf.format(mlocation.getBearing()) + " degrees )";
-					}
-					
+					sMessage += ShowExtras(mlocation);
 					
 					tv.setTextSize(24);
 					tv.setText(sMessage);
