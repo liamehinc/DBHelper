@@ -35,6 +35,7 @@ public class DAO {
 		this.insertStmt = this.db.compileStatement(INSERT);   
 		}     
 	
+	@SuppressWarnings("deprecation")
 	public long insert(int tripid, String insertype,Double lat, Double lon, Double dist2PrevCoord, Double cumDist) {  
 		this.insertStmt.bindDouble(1, tripid);
 		this.insertStmt.bindString(2, insertype);

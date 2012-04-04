@@ -298,6 +298,7 @@ public class Main extends Activity {
 	}
 
 	//Show Table of Trips on Screen
+	@SuppressWarnings("deprecation")
 	private void ShowAllData()
 	{
 
