@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?> 
 
-
-
 <ScrollView 
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="fill_parent"
@@ -103,7 +101,15 @@ android:text="" />
     </TableLayout>
     
 
-        
+<!--      <com.google.ads.AdView android:id="@+id/adViewBottom"
+                         android:layout_width="fill_parent"
+                         android:layout_height="wrap_content"
+                         ads:adUnitId="a14f7b925f43be9"
+                         ads:adSize="BANNER"
+                         ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
+                         ads:loadAdOnCreate="true"/>
+  
+  -->      
 </LinearLayout> 
 </ScrollView>
 

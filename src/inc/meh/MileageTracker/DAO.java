@@ -5,17 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase; 
 import android.database.sqlite.SQLiteOpenHelper; 
 import android.database.sqlite.SQLiteStatement; 
-//import android.net.ParseException;
 import android.util.Log;  
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList; 
 import java.util.Date;
 import java.util.List;   
-import java.util.TimeZone;
-
 
 public class DAO {      
 
@@ -69,33 +64,7 @@ public class DAO {
     }
 */	
 	
-	public String UTC2Local(String sDateIn) {
-        
-		String sDateOut="";
-
-        try {
-            //String dateStr = "2010-06-14 02:21:49-0400";
-            //sDateIn=dateStr;
-            
-            SimpleDateFormat sdf =  new SimpleDateFormat("dd MMM yyyy HH:mm:ss z");
-            TimeZone tz = TimeZone.getDefault();
-            sdf.setTimeZone(tz);
-            Date date = sdf.parse(sDateIn);
-
-            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-            sDateOut = sdf.format(date);
-
-            
-            //System.out.println(newDateStr);
-        
-        } catch (java.text.ParseException e) {
-			
-			e.printStackTrace();
-		}
-        
-        return sDateOut;
-    }	
-	
+		
 	public List<String> getTripInfo(String groupstring){
 		List<String> lTripInfo = new ArrayList<String>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { groupstring, "max(created_date)", "max(cumDist)"},null, null, groupstring, null, groupstring +" asc");
@@ -104,7 +73,7 @@ public class DAO {
 			do {
 				lTripInfo.add(Integer.toString(cursor.getInt(0)));
 
-				lTripInfo.add( UTC2Local(cursor.getString(1)) );
+				lTripInfo.add( Util.UTC2Local(cursor.getString(1)) );
 				
 				//convert to miles
 				//reduce to 9 decimal places to remove exponential notation
@@ -162,7 +131,7 @@ public class DAO {
 				list.add(Double.toString(cursor.getDouble(2)));
 				list.add(Double.toString(cursor.getDouble(3)));
 				list.add(Double.toString(cursor.getDouble(4)));
-				list.add( UTC2Local(cursor.getString(5)) );
+				list.add( Util.UTC2Local(cursor.getString(5)) );
 				list.add(Double.toString(cursor.getDouble(6)));
 				}
 			while (cursor.moveToNext());
@@ -172,13 +141,29 @@ public class DAO {
 			}   
 		return list;  
 		}     
+
+	public Cursor selectAll() {      
+		
+		String sortstring="coordinateid";
+		
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","dist2Prev","cumDist","created_date","tripid",sortstring},null, null, null, null, sortstring);
+		
+		//Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","dist2Prev","cumDist","created_date","tripid","coordinateid"},null, null, null, null, "coordinateid");
+		
+		//Cursor cursor = this.db.query(TABLE_NAME, new String[] { "created_date","cumDist","trip"},null, null, null, null, sortstring);
+		
+		return cursor;  
+
+	}     
+	
+	
 	
 	public List<String> exportAll(String sortstring) {      
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "created_date","cumDist",sortstring},null, null, null, null, sortstring);
 		if (cursor.moveToFirst()) {
 			do {
-				list.add( UTC2Local(cursor.getString(0)) );
+				list.add( Util.UTC2Local(cursor.getString(0)) );
 				list.add(Double.toString(cursor.getDouble(1)));
 				}
 			while (cursor.moveToNext());

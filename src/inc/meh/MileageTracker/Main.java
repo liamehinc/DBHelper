@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import android.app.Activity;
@@ -16,6 +17,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+//import android.database.Cursor;
 import android.location.*;
 import android.net.Uri;
 import android.os.Bundle;
@@ -57,6 +60,7 @@ public class Main extends Activity {
 	//initialize trip and provide context
 	private Trip t;
 	private History h;
+	private GPXFileWriter GPXfw;
 
 	final Criteria criteria = new Criteria();
 	
@@ -148,7 +152,7 @@ public class Main extends Activity {
 		{
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("Are you sure you want to exit while a trip is running?\n\nTo use other applications, please use the Home button.  You can still track when running in the background.")
+			builder.setMessage("Are you sure you want to exit while a trip is running?\n\nTo use other applications, please use the Home button.  You can still track when running in the background, but the accuracy will be reduced.")
 			       .setCancelable(false)
 			       .setTitle("Confirm Exit")
 			       .setPositiveButton("Exit and Stop Trip", new DialogInterface.OnClickListener() {
@@ -231,7 +235,9 @@ public class Main extends Activity {
     	//List<String> names = dh.getTripInfo("tripid");
     	List<String> names = h.getCompleteHistory();
 
-		StringBuilder sb = new StringBuilder();
+    	Cursor cursor = dh.selectAll();
+
+    	StringBuilder sb = new StringBuilder();
 		
 		int i = 0;
 		
@@ -252,12 +258,27 @@ public class Main extends Activity {
 		//Log.d("EXAMPLE", "names size - " + names.size());
 		
     	File file   = null;
+    	File fileGPX   = null;
+    	
     	File root   = Environment.getExternalStorageDirectory();
     	if (root.canWrite()){
     	    File dir    =   new File (root.getAbsolutePath() + "/PersonData");
     	     dir.mkdirs();
     	     file   =   new File(dir, getResources().getString(R.string.ExportFileName));
     	     FileOutputStream out   =   null;
+    	     
+    	     fileGPX   =   new File(dir, "triptracker.gpx");
+    	     
+    	     try {
+				
+    	    	 GPXFileWriter.writeGpxFileTrackPoints("name", cursor, fileGPX);
+			
+    	     } catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    	    	
+    	     
     	    try {
     	        out = new FileOutputStream(file);
     	        } catch (FileNotFoundException e) {
@@ -280,8 +301,13 @@ public class Main extends Activity {
     	
     	u1  =   Uri.fromFile(file);
 
+    	Uri u2  =   null;
+    	
+    	u2  =   Uri.fromFile(fileGPX);
+    	
     	//build email
-    	Intent sendIntent = new Intent(Intent.ACTION_SEND);
+    	//Intent sendIntent = new Intent(Intent.ACTION_SEND);
+    	final Intent sendIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
     	sendIntent.putExtra(Intent.EXTRA_SUBJECT, "MileageTracker Export");
     	
     	Calendar currentDate = Calendar.getInstance();
@@ -290,10 +316,36 @@ public class Main extends Activity {
     	  String dateNow = formatter.format(currentDate.getTime());
 
     	sendIntent.putExtra(Intent.EXTRA_TEXT, "Mileage Exported on: " + dateNow);
+    	
     	sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
-    	sendIntent.setType("text/html");
+    	sendIntent.putExtra(Intent.EXTRA_STREAM, u2);
+    	
+    	/*
+    	final Intent ei = new Intent(Intent.ACTION_SEND_MULTIPLE);
+    	ei.setType("plain/text");
+    	ei.putExtra(Intent.EXTRA_EMAIL, new String[] {"me@somewhere.nodomain"});
+    	ei.putExtra(Intent.EXTRA_SUBJECT, "That one works");
+    	*/
+    	
+    	ArrayList<Uri> uris = new ArrayList<Uri>();
+    	
+    	uris.add(u1);
+    	uris.add(u2);
 
-    	this.startActivity(Intent.createChooser(sendIntent, "Send mail..."));
+    	sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+    	
+    	sendIntent.setType("text/html");
+    	startActivityForResult(Intent.createChooser(sendIntent, "Sending mail..."), 12345);
+    	
+    	
+    	//ei.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+    	//startActivityForResult(Intent.createChooser(ei, "Sending multiple attachment"), 12345);
+    	
+    	
+    	
+    	
+
+    	//this.startActivity(Intent.createChooser(sendIntent, "Send mail..."));
 
 	}
 
@@ -459,6 +511,9 @@ public class Main extends Activity {
 		
 		//initialize History object and pass Context
 		this.h = new History(Main.this);
+		
+		//initialize History object and pass Context
+		this.GPXfw = new GPXFileWriter(Main.this);
 		
 		
 		

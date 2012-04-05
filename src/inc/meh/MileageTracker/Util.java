@@ -2,6 +2,9 @@ package inc.meh.MileageTracker;
 
 import java.text.DecimalFormat;
 //import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class Util {
 
@@ -58,4 +61,34 @@ public class Util {
 		DecimalFormat df = new DecimalFormat(sFormat);
        	return Double.valueOf(df.format(d));
 	}
+	
+public static String UTC2Local(String sDateIn) {
+        
+		String sDateOut="";
+
+        try {
+            //String dateStr = "2010-06-14 02:21:49-0400";
+            //sDateIn=dateStr;
+            
+            SimpleDateFormat sdf =  new SimpleDateFormat("dd MMM yyyy HH:mm:ss z");
+            TimeZone tz = TimeZone.getDefault();
+            sdf.setTimeZone(tz);
+            Date date = sdf.parse(sDateIn);
+
+            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+            sDateOut = sdf.format(date);
+
+            
+            //System.out.println(newDateStr);
+        
+        } catch (java.text.ParseException e) {
+			
+			e.printStackTrace();
+		}
+        
+        return sDateOut;
+    }	
+
+	
+	
 }
