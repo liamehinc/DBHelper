@@ -115,13 +115,14 @@ public class GPXFileWriter {
                                         + "lon=\"" + c.getDouble(c.getColumnIndex("lon")) 
                                         + "\">\n");
 
+                        out.append("<time>" + Util.UTC2Local(c.getString(c.getColumnIndex("created_date"))) + "</time>\n");
+
                          out.append("<ele>" + c.getDouble(c.getColumnIndex("elevation")) + "</ele>\n");
                          
                          out.append("<speed>" + c.getDouble(c.getColumnIndex("speed")) + "</speed>\n");
                          
                          out.append("<bearing>" + c.getDouble(c.getColumnIndex("bearing")) + "</bearing>\n");
                 
-                        out.append("<time>" + Util.UTC2Local(c.getString(c.getColumnIndex("created_date"))) + "</time>\n");
                         
                         //out.append("<time>" + POINT_DATE_FORMATTER.format(new Date(c.getLong(c.getColumnIndex("4")))) + "</time>");
                 
