@@ -91,6 +91,14 @@ android:text="" />
     android:layout_height="wrap_content"
     android:paddingBottom="15dp"></TextView>
 
+<TextView android:id="@+id/TextViewSubText"
+    android:text="" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:paddingBottom="15dp"
+    android:textSize="12dp"></TextView>
+
+
     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"

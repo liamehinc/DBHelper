@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 public class Main extends Activity {
 	private TextView tv;
+	private TextView tvSubText;
 	private DAO dh;
 	protected LocationManager mLocationManager;
 	protected LocationListener mLocationListener;
@@ -637,6 +638,7 @@ public class Main extends Activity {
 
 				// Perform action on click
 				tv = (TextView) findViewById(R.id.TextView1);
+				tvSubText = (TextView) findViewById(R.id.TextViewSubText);
 
 				String locationprovider = mLocationManager.getBestProvider(
 						criteria, true);
@@ -668,6 +670,7 @@ public class Main extends Activity {
 						
 						tv.setTextSize(24);
 						tv.setText(sMessage);
+						tvSubText.setText("");
 
 						
 					}
@@ -680,7 +683,8 @@ public class Main extends Activity {
 							// display to screen (i.e. odometer)
 
 							tv.setText("Last Trip Completed: #" + t.getTripId() + "\nTrip Distance: " + nfm.format(Util.Meters2Miles(t.getCumulativeTripDistance())));
-
+							
+							tvSubText.setText(getResources().getString(R.string.stopSubText));
 							
 						//change button text
 						buttonStart.setText(getResources().getString(R.string.Insert));
