@@ -19,6 +19,7 @@ public class Trip {
 	int InsertStringTripId;
 	double dCumulativeDistance;
 	double dCumDist;
+
 	double elevation;
 	double speed;
 	double bearing;
@@ -67,6 +68,37 @@ public class Trip {
 		this.name = name;
 	}
 
+	
+	public double getElevation() {
+		return elevation;
+	}
+
+
+	public void setElevation(double elevation) {
+		this.elevation = elevation;
+	}
+
+
+	public double getSpeed() {
+		return speed;
+	}
+
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+
+	public double getBearing() {
+		return bearing;
+	}
+
+
+	public void setBearing(double bearing) {
+		this.bearing = bearing;
+	}
+	
+	
 	public Trip(Context context) {
 	
 		// initialize the database
