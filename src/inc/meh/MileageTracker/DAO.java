@@ -17,12 +17,12 @@ public class DAO {
 	NumberFormat nfm = new DecimalFormat("#0.000000000");
 
 	private static final String DATABASE_NAME = "trips.db";    
-	private static final int DATABASE_VERSION = 11;    
+	private static final int DATABASE_VERSION = 14;    
 	private static final String TABLE_NAME = "coordinates";      
 	private Context context;    
 	private SQLiteDatabase db;      
 	private SQLiteStatement insertStmt;    
-	private static final String INSERT = "insert into " + TABLE_NAME + " (tripid,insertype,lat,lon,dist2Prev,cumDist,created_date) values (?,?,?,?,?,?,?)";      
+	private static final String INSERT = "insert into " + TABLE_NAME + " (tripid,insertype,lat,lon,dist2Prev,cumDist,created_date,elevation,speed,bearing) values (?,?,?,?,?,?,?,?,?,?)";      
 	public DAO(Context context) {       
 		this.context = context;       
 		OpenHelper openHelper = new OpenHelper(this.context);       
@@ -31,7 +31,7 @@ public class DAO {
 		}     
 	
 	@SuppressWarnings("deprecation")
-	public long insert(int tripid, String insertype,Double lat, Double lon, Double dist2PrevCoord, Double cumDist) {  
+	public long insert(int tripid, String insertype,Double lat, Double lon, Double dist2PrevCoord, Double cumDist, Double elevation, Double speed, Double bearing) {  
 		this.insertStmt.bindDouble(1, tripid);
 		this.insertStmt.bindString(2, insertype);
 		this.insertStmt.bindDouble(3,lat);
@@ -43,6 +43,11 @@ public class DAO {
 		Date today = new Date();
 		this.insertStmt.bindString(7, today.toGMTString());
 
+		this.insertStmt.bindDouble(8,elevation);
+		this.insertStmt.bindDouble(9,speed);
+		this.insertStmt.bindDouble(10,bearing);
+
+		
 		return this.insertStmt.executeInsert();    
 		}      
 	
@@ -146,7 +151,7 @@ public class DAO {
 		
 		String sortstring="coordinateid";
 		
-		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","dist2Prev","cumDist","created_date","tripid",sortstring},null, null, null, null, sortstring);
+		Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","dist2Prev","cumDist","created_date","tripid","coordinateid","elevation","speed","bearing"},null, null, null, null, sortstring);
 		
 		//Cursor cursor = this.db.query(TABLE_NAME, new String[] { "insertype", "lat", "lon","dist2Prev","cumDist","created_date","tripid","coordinateid"},null, null, null, null, "coordinateid");
 		
@@ -182,7 +187,7 @@ public class DAO {
 			
 			@Override      
 			public void onCreate(SQLiteDatabase db) {         
-				db.execSQL("CREATE TABLE coordinates (coordinateid INTEGER PRIMARY KEY AUTOINCREMENT, tripid integer, insertype TEXT, lat real, lon real, dist2Prev real, cumDist real, created_date date default CURRENT_DATE)");      
+				db.execSQL("CREATE TABLE coordinates (coordinateid INTEGER PRIMARY KEY AUTOINCREMENT, tripid integer, insertype TEXT, lat real, lon real, dist2Prev real, cumDist real, created_date date default CURRENT_DATE, elevation real, speed real, bearing real)");      
 				//db.execSQL("CREATE TABLE " + "trip (tripid INTEGER PRIMARY KEY AUTOINCREMENT, catid integer, name text, description text, distance real, duration text, vehicleid integer, starttime text, stoptime text)");
 				//db.execSQL("CREATE TABLE " + "category (catid INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text, isdeductible boolean)");
 				//db.execSQL("CREATE TABLE " + "route (routeid INTEGER PRIMARY KEY AUTOINCREMENT, tripid integer)");

@@ -56,6 +56,9 @@ public class Main extends Activity {
 	int iMinDist=1;
 	NumberFormat nf = new DecimalFormat("#0.00");
 	NumberFormat nfm = new DecimalFormat("#0.000000000");
+	Double elevation = null;
+	Double speed = null;
+	Float bearing = null;
 	
 	//initialize trip and provide context
 	private Trip t;
@@ -732,7 +735,7 @@ public class Main extends Activity {
 					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
 					
-					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);
+					dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat, InsertStringLon,dist2Prev, dcumDist, elevation, speed, bearing.doubleValue());
 
 					//Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
 					
@@ -929,15 +932,11 @@ public class Main extends Activity {
 					// dist2Prev + "'," + cumDist;
 					double dist2Prev = calcedDist[0];
 					double dcumDist = calcedDist[1];
-					
-					//String InsertString = InsertStringInsertype + ","
-					//		+ InsertStringLat + "," + InsertStringLon + ","
-					//		+ dist2Prev + "," + dcumDist;
-					
-					// Toast.makeText(Main.this, InsertString, Toast.LENGTH_SHORT).show();
-					//  dh.insert(InsertString, InsertStringLat, InsertStringLon,dist2Prev, dcumDist);  - causing duplicate string insertion into 1 row
+
+					t.SetExtras(mlocation);
+
 					dh.insert(t.getTripId(),InsertStringInsertype, InsertStringLat, InsertStringLon,
-							dist2Prev, dcumDist);
+							dist2Prev, dcumDist, t.elevation, t.speed, t.bearing);
 					
 					//String sCumDist= dcumDist.toString();
 					

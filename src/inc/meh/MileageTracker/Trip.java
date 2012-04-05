@@ -19,6 +19,9 @@ public class Trip {
 	int InsertStringTripId;
 	double dCumulativeDistance;
 	double dCumDist;
+	double elevation;
+	double speed;
+	double bearing;
 
 
 	private double distance;
@@ -87,9 +90,31 @@ public class Trip {
 
 		//insert first entry in Database for this trip
 		dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
-				InsertStringLon, 0.0, 0.0);
+				InsertStringLon, 0.0, 0.0, 0.0, 0.0, 0.0);
 
 	}
+	
+	
+	//Set Extra Info for Screen
+	protected void SetExtras(Location mlocation)
+	{
+		
+		if (mlocation.hasSpeed())
+			speed= mlocation.getSpeed()*2.23693629;
+		
+		if (mlocation.hasAltitude())
+			elevation=mlocation.getAltitude()*3.2808399;
+		
+		if (mlocation.hasBearing())
+		{
+		
+			bearing = mlocation.getBearing();
+		}
+		
+	}
+
+	
+	
 	//Method to stop tracking trip
 	protected void StopTrack(LocationManager mLocationManager, Criteria criteria, LocationListener mLocationListener) {
 		
@@ -157,7 +182,7 @@ public class Trip {
 	
 			//write to DAO
 			dh.insert(InsertStringTripId,InsertStringInsertype, InsertStringLat,
-					InsertStringLon, dist2Prev, cumDist);
+					InsertStringLon, dist2Prev, cumDist, elevation, speed, bearing);
 			
 			//update cumulative distance for UI
 			dCumDist=cumDist;
