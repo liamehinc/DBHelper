@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/export_data" android:title="Export My Trips" android:visible="true" android:enabled="true"></item>
-    <item android:id="@+id/truncate_data" android:title="Erase All My Trips" android:visible="true" android:enabled="true"></item>
     <item android:id="@+id/show_all_data" android:title="Show All My Trips" android:visible="true" android:enabled="true"></item>
+    <item android:id="@+id/export_data" android:title="Export My Trips" android:visible="true" android:enabled="true"></item>
+    <item android:id="@+id/export_data_detailed" android:title="Export Trips as GPX" android:visible="true" android:enabled="true"></item>
+    <item android:id="@+id/truncate_data" android:title="Erase All My Trips" android:visible="true" android:enabled="true"></item>
     <item android:id="@+id/exit" android:title="Exit" android:visible="true" android:enabled="true"></item>
 </menu>

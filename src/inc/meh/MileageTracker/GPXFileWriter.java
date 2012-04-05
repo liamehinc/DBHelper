@@ -21,7 +21,7 @@ import android.database.Cursor;
 public class GPXFileWriter {
 	
 		public Main Main;
-		private DAO dh;
+		//private DAO dh;
 
         /**
          * XML header.
@@ -55,7 +55,7 @@ public class GPXFileWriter {
     	public GPXFileWriter(Context context) {
     		
     		// initialize the database
-    		this.dh = new DAO(context);
+    		//this.dh = new DAO(context);
     		//this.Main = new Main();
     		
     	}
@@ -95,12 +95,13 @@ public class GPXFileWriter {
          * @throws IOException
          */
         public static void writeTrackPoints(String trackName, FileWriter fw, Cursor c) throws IOException {
-                fw.write("\t" + "<trk>");
-                fw.write("\t\t" + "<name>" + trackName + "</name>" + "\n");
+        	/*
+            fw.write("\t" + "<trk>\n");
+            fw.write("\t\t" + "<name>" + trackName + "</name>" + "\n");
+            
+            fw.write("\t\t" + "<trkseg>" + "\n");
+
                 
-                fw.write("\t\t" + "<trkseg>" + "\n");
-                
-                /*
                 while (!c.isAfterLast() ) {
                         StringBuffer out = new StringBuffer();
                         out.append("\t\t\t" + "<trkpt lat=\"" 
@@ -128,22 +129,32 @@ public class GPXFileWriter {
         			do {
 
         				StringBuffer out = new StringBuffer();
-                        out.append("\t\t\t" + "<trkpt lat=\"" 
+        				
+        				fw.write("\t" + "<trk>\n");
+        	            fw.write("\t\t" + "<name>Trip " + c.getString(c.getColumnIndex("tripid")) + "</name>" + "\n");
+        	            
+        	            fw.write("\t\t" + "<trkseg>" + "\n");
+
+        	            out.append("\t\t\t" + "<trkpt lat=\"" 
                                         + c.getDouble(c.getColumnIndex("lat"))
 //                        				+ c.getDouble(0)
                         				+ "\" "
                                         + "lon=\"" + c.getDouble(c.getColumnIndex("lon")) 
-                                        + "\">");
+                                        + "\">\n");
 
                         // out.append("<ele>" + c.getDouble(c.getColumnIndex(DataHelper.Schema.COL_ELEVATION)) + "</ele>");
                 
+                        out.append("<time>" + Util.UTC2Local(c.getString(c.getColumnIndex("created_date"))) + "</time>\n");
+                        
                         //out.append("<time>" + POINT_DATE_FORMATTER.format(new Date(c.getLong(c.getColumnIndex("4")))) + "</time>");
                 
                
                 out.append("</trkpt>" + "\n");
                 fw.write(out.toString());
 
-        			
+        		
+                fw.write("\t\t" + "</trkseg>" + "\n");
+                fw.write("\t" + "</trk>" + "\n");
         			
         			
         			
@@ -155,8 +166,7 @@ public class GPXFileWriter {
         			}   
         		
                 
-                fw.write("\t\t" + "</trkseg>" + "\n");
-                fw.write("\t" + "</trk>" + "\n");
+                
         }
         
         /**

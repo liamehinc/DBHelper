@@ -60,7 +60,7 @@ public class Main extends Activity {
 	//initialize trip and provide context
 	private Trip t;
 	private History h;
-	private GPXFileWriter GPXfw;
+	//private GPXFileWriter GPXfw;
 
 	final Criteria criteria = new Criteria();
 	
@@ -81,7 +81,13 @@ public class Main extends Activity {
 	        	ExportData();
 	        	Toast.makeText(this, "Exporting trips...", Toast.LENGTH_SHORT).show();
 	        	return true;
+
+	        case R.id.export_data_detailed:
+	        	ExportDataDetailed();
+	        	Toast.makeText(this, "Exporting detailed trips...", Toast.LENGTH_SHORT).show();
+	        	return true;
 	        
+
 	        case R.id.truncate_data:
 	        	
 	        	if (isTracking){
@@ -235,6 +241,87 @@ public class Main extends Activity {
     	//List<String> names = dh.getTripInfo("tripid");
     	List<String> names = h.getCompleteHistory();
 
+    	StringBuilder sb = new StringBuilder();
+		
+		int i = 0;
+		
+		//iterate through results and build csv
+		for (String name : names) {
+			 
+			sb.append(name + ", ");
+			i++;
+			
+			//end of line
+			if (i==3) {
+				sb.append("\n");
+				i=0;
+			}
+		}
+
+		combinedString += sb.toString();
+		//Log.d("EXAMPLE", "names size - " + names.size());
+		
+    	File file   = null;
+    	
+    	File root   = Environment.getExternalStorageDirectory();
+    	if (root.canWrite()){
+    	    File dir    =   new File (root.getAbsolutePath() + getResources().getString(R.string.ExportDirectory));
+    	     dir.mkdirs();
+    	     file   =   new File(dir, getResources().getString(R.string.ExportFileName));
+    	     FileOutputStream out   =   null;
+
+    	     try {
+    	        out = new FileOutputStream(file);
+    	        } catch (FileNotFoundException e) {
+    	            e.printStackTrace();
+    	        }
+    	        try {
+    	            out.write(combinedString.getBytes());
+    	        } catch (IOException e) {
+    	            e.printStackTrace();
+    	        }
+    	        try {
+    	            out.close();
+    	        } catch (IOException e) {
+    	            e.printStackTrace();
+    	        }
+    	    }
+
+    	//get local .csv file
+    	Uri u1  =   null;
+    	
+    	u1  =   Uri.fromFile(file);
+
+    	//build email
+    	Intent sendIntent = new Intent(Intent.ACTION_SEND);
+    	//final Intent sendIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+    	sendIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name)+ " Export");
+    	
+    	Calendar currentDate = Calendar.getInstance();
+    	  SimpleDateFormat formatter= 
+    	  new SimpleDateFormat("EEE, MMM d yyyy HH:mm:ss");
+    	  String dateNow = formatter.format(currentDate.getTime());
+
+    	sendIntent.putExtra(Intent.EXTRA_TEXT, "Mileage Exported on: " + dateNow);
+    	
+    	sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
+    	
+    	sendIntent.setType("text/html");
+
+    	this.startActivity(Intent.createChooser(sendIntent, "Sending mail..."));
+
+	}
+
+	private void ExportDataDetailed()
+	{
+		
+		String columnString ="Trip Number, Date Created, Distance Travelled (miles) ";
+    	String combinedString = columnString + "\n"; //+ dataString;
+
+    	//Call DB via DAO
+    	//List<String> names = dh.getTripInfo("tripid");
+    	List<String> names = h.getCompleteHistory();
+
     	Cursor cursor = dh.selectAll();
 
     	StringBuilder sb = new StringBuilder();
@@ -262,16 +349,16 @@ public class Main extends Activity {
     	
     	File root   = Environment.getExternalStorageDirectory();
     	if (root.canWrite()){
-    	    File dir    =   new File (root.getAbsolutePath() + "/PersonData");
+    	    File dir    =   new File (root.getAbsolutePath() + getResources().getString(R.string.ExportDirectory));
     	     dir.mkdirs();
     	     file   =   new File(dir, getResources().getString(R.string.ExportFileName));
     	     FileOutputStream out   =   null;
     	     
-    	     fileGPX   =   new File(dir, "triptracker.gpx");
+    	     fileGPX   =   new File(dir, getResources().getString(R.string.ExportFileNameGPX));
     	     
     	     try {
 				
-    	    	 GPXFileWriter.writeGpxFileTrackPoints("name", cursor, fileGPX);
+    	    	 GPXFileWriter.writeGpxFileTrackPoints("TripTracker", cursor, fileGPX);
 			
     	     } catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -308,7 +395,10 @@ public class Main extends Activity {
     	//build email
     	//Intent sendIntent = new Intent(Intent.ACTION_SEND);
     	final Intent sendIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-    	sendIntent.putExtra(Intent.EXTRA_SUBJECT, "MileageTracker Export");
+    	//sendIntent.putExtra(Intent.EXTRA_SUBJECT, "MileageTracker Export");
+    	
+    	sendIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name)+ " Export");
+    	
     	
     	Calendar currentDate = Calendar.getInstance();
     	  SimpleDateFormat formatter= 
@@ -320,13 +410,6 @@ public class Main extends Activity {
     	sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
     	sendIntent.putExtra(Intent.EXTRA_STREAM, u2);
     	
-    	/*
-    	final Intent ei = new Intent(Intent.ACTION_SEND_MULTIPLE);
-    	ei.setType("plain/text");
-    	ei.putExtra(Intent.EXTRA_EMAIL, new String[] {"me@somewhere.nodomain"});
-    	ei.putExtra(Intent.EXTRA_SUBJECT, "That one works");
-    	*/
-    	
     	ArrayList<Uri> uris = new ArrayList<Uri>();
     	
     	uris.add(u1);
@@ -336,20 +419,12 @@ public class Main extends Activity {
     	
     	sendIntent.setType("text/html");
     	startActivityForResult(Intent.createChooser(sendIntent, "Sending mail..."), 12345);
-    	
-    	
-    	//ei.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-    	//startActivityForResult(Intent.createChooser(ei, "Sending multiple attachment"), 12345);
-    	
-    	
-    	
-    	
-
-    	//this.startActivity(Intent.createChooser(sendIntent, "Send mail..."));
 
 	}
 
-	//Show Table of Trips on Screen
+	
+	
+	//Show Extra Info on Screen
 	private String ShowExtras(Location mlocation)
 	{
 		String sMessage="";
@@ -513,7 +588,7 @@ public class Main extends Activity {
 		this.h = new History(Main.this);
 		
 		//initialize History object and pass Context
-		this.GPXfw = new GPXFileWriter(Main.this);
+		//this.GPXfw = new GPXFileWriter(Main.this);
 		
 		
 		
