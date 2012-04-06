@@ -23,4 +23,7 @@
     <string name="ExportFileNameGPX">triptracker.gpx</string>
     <string name="stopSubText">Additional functionality available via the menu button.</string>
     
+    <string name="GPSUpdateMinimumDistance">1</string>
+    <string name="GPSUpdateMinimumTime">3000</string>
+    
 </resources>
