@@ -581,8 +581,8 @@ public class Main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		iMinTime=Integer.parseInt(getResources().getString(R.string.GPSUpdateMinimumTime));
-		iMinDist=Integer.parseInt(getResources().getString(R.string.GPSUpdateMinimumTime));
+		//iMinTime=Integer.parseInt(getResources().getString(R.string.GPSUpdateMinimumTime));
+		//iMinDist=Integer.parseInt(getResources().getString(R.string.GPSUpdateMinimumTime));
 		
 		
 		setContentView(R.layout.main);
@@ -673,7 +673,7 @@ public class Main extends Activity {
 						
 						sMessage += ShowExtras(mLocation);
 						
-						tv.setTextSize(24);
+						tv.setTextSize(18);
 						tv.setText(sMessage);
 						tvSubText.setText("");
 
@@ -953,7 +953,7 @@ public class Main extends Activity {
 					
 					sMessage += ShowExtras(mlocation);
 					
-					tv.setTextSize(24);
+					tv.setTextSize(18);
 					tv.setText(sMessage);
 
 				}// end isTripActive()
