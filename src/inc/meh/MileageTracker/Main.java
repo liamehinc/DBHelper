@@ -53,8 +53,9 @@ public class Main extends Activity {
 	private boolean debug=false;
 	public boolean isTracking=false;
 	int InsertStringTripId;
-	int iMinTime=Integer.parseInt(getResources().getString(R.string.GPSUpdateMinimumTime));//3000;
-	int iMinDist=Integer.parseInt(getResources().getString(R.string.GPSUpdateMinimumTime));;
+	int iMinTime=3000;
+	int iMinDist=1;
+	
 	NumberFormat nf = new DecimalFormat("#0.00");
 	NumberFormat nfm = new DecimalFormat("#0.000000000");
 	Double elevation = null;
@@ -580,6 +581,10 @@ public class Main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		iMinTime=Integer.parseInt(getResources().getString(R.string.GPSUpdateMinimumTime));
+		iMinDist=Integer.parseInt(getResources().getString(R.string.GPSUpdateMinimumTime));
+		
+		
 		setContentView(R.layout.main);
 
 		// initialize the database
